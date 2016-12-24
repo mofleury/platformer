@@ -1,0 +1,1 @@
+/usr/bin/love /home/mofleury/love_projects/helloworld -ideadebug

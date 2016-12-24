@@ -7,6 +7,10 @@ screen = {}
 
 function love.load()
 	if arg[#arg] == "-debug" then require("mobdebug").start() end
+	if arg[#arg] == "-ideadebug" then
+		package.path=[[/home/mofleury/.IdeaIC2016.3/config/plugins/Lua/classes/mobdebug/?.lua;]]  ..  package.path
+		require("mobdebug").start()
+	end
 
 	screen.dx = love.graphics.getWidth()
 	screen.dy = love.graphics.getHeight()
