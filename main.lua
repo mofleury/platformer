@@ -133,27 +133,33 @@ function love.update(dt)
 
     if love.keyboard.isDown('d') then
         player.orientation = 1
-        player.state = "running"
+        if (player.y_velocity == 0) then
+            player.state = "running"
+        end
         if player.x < (screen.dx - player.dx) then
             player:setX(player.x + player.speed * dt)
         end
     elseif love.keyboard.isDown('a') then
         player.orientation = -1
-        player.state = "running"
+        if (player.y_velocity == 0) then
+            player.state = "running"
+        end
         if player.x > 0 then
             player:setX(player.x - (player.speed * dt))
         end
-    else
+    elseif (player.y_velocity == 0) then
         player.state = "idle"
     end
 
     if love.keyboard.isDown('space') then
         if player.y_velocity == 0 then
             player.y_velocity = player.jump_height
+            player.state = "jumping"
         end
     elseif player.y_velocity > 0 then
         -- mid jump, but not hitting jum key anymore : small jump
         player.y_velocity = 0
+--        player.state = "landing"
     end
 
     player:setY(player.y + player.y_velocity * dt)
