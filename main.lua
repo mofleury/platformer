@@ -7,6 +7,8 @@ screen = {}
 
 zero = nil
 
+debug_data = {}
+
 animation = require "animation"
 
 function love.load()
@@ -46,16 +48,67 @@ function love.load()
     player.gravity = -800
 
     table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
+    table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
+    table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
     table.insert(obstacles, platform)
 
     zero = animation.animator(dofile("zero_sprites.lua"))
 end
 
 local function collide(o1, o2)
-    return o1.x < o2.x + o2.dx and
-            o2.x < o1.x + o1.dx and
-            o1.y < o2.y + o2.dy and
-            o2.y < o1.y + o1.dy
+
+    local w = 0.5 * (o1.dx + o2.dx);
+    local h = 0.5 * (o1.dy + o2.dy);
+    local dx = (o1.x + o1.dx / 2) - (o2.x + o2.dx / 2);
+    local dy = (o1.y + o1.dy / 2) - (o2.y + o2.dy / 2);
+
+    if (math.abs(dx) <= w and math.abs(dy) <= h) then
+
+        local wy = w * dy;
+        local hx = h * dx;
+
+        local details = {}
+
+        if (wy > hx) then
+
+            if (wy > -hx) then
+                -- / * collision at the bottom * /
+                details.bottom = true
+            else
+                -- / * on the right * /
+                details.right = true
+            end
+        else
+            if (wy > -hx) then
+                --  / * on the left * /
+                details.left = true
+            else
+                -- / * at the top * /
+                details.top = true
+            end
+        end
+
+        if (math.abs(math.abs(wy) - math.abs(hx)) <= player.speed) then
+            -- edge case : we are on a corner, we should say that both egdes collide
+            if (wy > 0 and hx > 0) then
+                details.bottom = true
+                details.left = true
+            elseif (wy > 0 and hx < 0) then
+                details.bottom = true
+                details.right = true
+            elseif (wy < 0 and hx > 0) then
+                details.top = true
+                details.left = true
+            elseif (wy < 0 and hx < 0) then
+                details.top = true
+                details.right = true
+            end
+        end
+
+        return true, details
+    end
+
+    return false, {}
 end
 
 function player:setX(x)
@@ -66,6 +119,8 @@ end
 function player:setY(y)
     self.oldy, self.y = self.y, y
 end
+
+
 
 function love.update(dt)
 
@@ -91,22 +146,28 @@ function love.update(dt)
     player:setY(player.y + player.y_velocity * dt)
     player.y_velocity = player.y_velocity + player.gravity * dt
 
-    local colliding = false
+    local colliding, details = false, {}
     for i, o in ipairs(obstacles) do
-        if (collide(player, o)) then
-            player.y_velocity = 0
-            colliding = true
+        colliding, details = collide(player, o)
+        if (colliding) then
             break
         end
     end
 
     if (colliding) then
-        player:setX(player.oldx)
-        player:setY(player.oldy)
-        player.y_velocity = 0
+
+       -- debug_data.collision = details
+        if (details.bottom or details.top) then
+            player.y_velocity = 0
+            player:setY(player.oldy)
+        end
+
+        if (details.left or details.right) then
+            player:setX(player.oldx)
+        end
     end
 
-    -- clean original values for next iteration
+    -- cleanup original values for next iteration
     player.oldx = player.x
     player.oldy = player.y
 
@@ -119,8 +180,29 @@ local function drawBox(b)
     love.graphics.rectangle('fill', b.x, screen.dy - b.y - b.dy, b.dx, b.dy)
 end
 
+local function deepPrint(t)
+
+    local function deepPrintWithGap(t, gap, buffer)
+        for key, value in pairs(t) do
+            if (type(value) == "table") then
+                table.insert(buffer, gap .. key)
+                deepPrintWithGap(value, gap .. "  ", buffer)
+            else
+                table.insert(buffer, gap .. key .. " = " .. tostring(value))
+            end
+        end
+    end
+
+    local b = {}
+    deepPrintWithGap(t, "", b)
+
+    love.graphics.print(table.concat(b, "\n"))
+end
+
 function love.draw()
 
+    deepPrint(debug_data)
+    debug_data = {}
 
     drawBox(platform)
 
