@@ -15,8 +15,6 @@ do
     local animations = {
         idle = {
             quadAt(12),
-            quadAt(13),
-            quadAt(14)
         },
         running_start = {
             quadAt(1)

@@ -2,6 +2,7 @@ platform = {}
 player = {}
 
 obstacles = {}
+animators = {}
 
 screen = {}
 
@@ -22,6 +23,10 @@ function love.load()
     screen.dx = love.graphics.getWidth()
     screen.dy = love.graphics.getHeight()
 
+    local zero_spritesheet = dofile("zero_sprites.lua")
+    local zero = animation.animator(zero_spritesheet, player)
+    table.insert(animators, zero)
+
     platform.dx = love.graphics.getWidth()
     platform.dy = 20
 
@@ -32,11 +37,11 @@ function love.load()
 
     player.y = platform.y + platform.dy + 200
 
-
-    player.dx = 32
-    player.dy = 32
+    player.dx = zero_spritesheet.tile_w
+    player.dy = zero_spritesheet.tile_h
 
     player.orientation = 1
+    player.state = "idle"
 
     player.speed = 200
 
@@ -53,8 +58,6 @@ function love.load()
     table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
     table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
     table.insert(obstacles, platform)
-
-    zero = animation.animator(dofile("zero_sprites.lua"))
 end
 
 local function collide(o1, o2)
@@ -128,14 +131,18 @@ function love.update(dt)
 
     if love.keyboard.isDown('d') then
         player.orientation = 1
+        player.state = "running"
         if player.x < (screen.dx - player.dx) then
             player:setX(player.x + player.speed * dt)
         end
     elseif love.keyboard.isDown('a') then
         player.orientation = -1
+        player.state = "running"
         if player.x > 0 then
             player:setX(player.x - (player.speed * dt))
         end
+    else
+        player.state = "idle"
     end
 
     if love.keyboard.isDown('space') then
@@ -175,7 +182,9 @@ function love.update(dt)
     player.oldx = player.x
     player.oldy = player.y
 
-    zero.update(dt)
+    for i, a in ipairs(animators) do
+        a.update(dt)
+    end
 end
 
 
@@ -208,14 +217,11 @@ function love.draw()
     deepPrint(debug_data)
     debug_data = {}
 
-    drawBox(platform)
-
-    drawBox(player)
-
-
     for i, o in ipairs(obstacles) do
         drawBox(o)
     end
 
-    zero.draw(player)
+    for i, a in ipairs(animators) do
+        a.draw()
+    end
 end
