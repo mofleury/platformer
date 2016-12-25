@@ -1,5 +1,7 @@
 local animation = {}
 
+local animation_slowdown_factor = 1
+
 function animation.animator(spritesheet, object)
 
     local animator = {}
@@ -10,12 +12,13 @@ function animation.animator(spritesheet, object)
     local time_elapsed = 0
 
     function animator.draw()
+        debug_data.index = index
 
         local xDraw
         if (object.orientation == 1) then
             xDraw = object.x
         else
-            xDraw = object.x + spritesheet.tile_w
+            xDraw = object.x + spritesheet.animations[object.state][index + 1].dy
         end
         local xScale
         if (object.orientation == 1) then
@@ -26,12 +29,14 @@ function animation.animator(spritesheet, object)
 
         love.graphics.draw(spritesheet.image, --The image
             --Current frame of the current animation
-            spritesheet.animations[object.state][index + 1],
+            spritesheet.animations[object.state][index + 1].q,
             xDraw,
-            screen.dy - spritesheet.tile_h - object.y,
+            screen.dy - spritesheet.animations[object.state][index + 1].dy - object.y,
             0,
             xScale,
             1)
+
+        debug_data.sprite = spritesheet.animations[object.state][index + 1]
     end
 
     function animator.update(dt)
@@ -42,7 +47,7 @@ function animation.animator(spritesheet, object)
         end
 
         time_elapsed = time_elapsed + dt
-        if (time_elapsed > spritesheet.frame_duration) then
+        if (time_elapsed > spritesheet.frame_duration * animation_slowdown_factor) then
             index = (index + 1) % table.getn(spritesheet.animations[object.state])
 
             time_elapsed = 0

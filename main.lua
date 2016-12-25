@@ -20,14 +20,16 @@ function love.load()
         require("mobdebug").start()
     end
 
-    screen.dx = love.graphics.getWidth()
-    screen.dy = love.graphics.getHeight()
+    love.window.setMode(1600, 1200, { highdpi = true })
+
+    screen.dx = love.graphics.getWidth() / 2
+    screen.dy = love.graphics.getHeight() / 2
 
     local zero_spritesheet = dofile("zero_sprites.lua")
     local zero = animation.animator(zero_spritesheet, player)
     table.insert(animators, zero)
 
-    platform.dx = love.graphics.getWidth()
+    platform.dx = screen.dx
     platform.dy = 20
 
     platform.x = 0
@@ -37,8 +39,8 @@ function love.load()
 
     player.y = platform.y + platform.dy + 200
 
-    player.dx = zero_spritesheet.tile_w
-    player.dy = zero_spritesheet.tile_h
+    player.dx = 48
+    player.dy = 48
 
     player.orientation = 1
     player.state = "idle"
@@ -214,8 +216,7 @@ end
 
 function love.draw()
 
-    deepPrint(debug_data)
-    debug_data = {}
+    love.graphics.scale(2, 2)
 
     for i, o in ipairs(obstacles) do
         drawBox(o)
@@ -224,4 +225,7 @@ function love.draw()
     for i, a in ipairs(animators) do
         a.draw()
     end
+
+    deepPrint(debug_data)
+    debug_data = {}
 end
