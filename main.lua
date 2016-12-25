@@ -7,10 +7,40 @@ screen = {}
 
 zero = nil
 
+function animator(spritesheet)
+
+    local state = "running"
+    local index = 0
+
+    local time_elapsed = 0
+
+    local draw = function(x, y)
+        love.graphics.draw(spritesheet.image, --The image
+            --Current frame of the current animation
+            spritesheet.animations[state][index + 1],
+            x,
+            screen.dy - spritesheet.tile_h - y)
+    end
+
+    local update = function(dt)
+        time_elapsed = time_elapsed + dt
+        if (time_elapsed > spritesheet.frame_duration) then
+            index = (index + 1) % table.getn(spritesheet.animations[state])
+
+            time_elapsed = 0
+        end
+    end
+
+    return {
+        draw = draw,
+        update = update
+    }
+end
 
 
 function love.load()
-    if arg[#arg] == "-debug" then require("mobdebug").start() end
+    if arg[#arg] == "-debug" then require("mobdebug").start()
+    end
     if arg[#arg] == "-ideadebug" then
         package.path = [[/home/mofleury/.IdeaIC2016.3/config/plugins/Lua/classes/mobdebug/?.lua;]] .. package.path
         require("mobdebug").start()
@@ -47,7 +77,7 @@ function love.load()
     table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
     table.insert(obstacles, platform)
 
-    zero = dofile("zero_sprites.lua")
+    zero = animator(dofile("zero_sprites.lua"))
 end
 
 local function collide(o1, o2)
@@ -108,6 +138,8 @@ function love.update(dt)
     -- clean original values for next iteration
     player.oldx = player.x
     player.oldy = player.y
+
+    zero.update(dt)
 end
 
 
@@ -118,18 +150,15 @@ end
 
 function love.draw()
 
-    love.graphics.draw(zero.image, --The image
-        --Current frame of the current animation
-        zero.animations.idle[1],
-        player.x,
-        player.y)
 
     drawBox(platform)
 
     drawBox(player)
-    -- love.graphics.draw(player.img, player.x, player.y, 0, 1, 1, 0, 32)
+
 
     for i, o in ipairs(obstacles) do
         drawBox(o)
     end
+
+    zero.draw(player.x, player.y)
 end
