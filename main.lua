@@ -5,6 +5,10 @@ obstacles = {}
 
 screen = {}
 
+zero = nil
+
+
+
 function love.load()
     if arg[#arg] == "-debug" then require("mobdebug").start() end
     if arg[#arg] == "-ideadebug" then
@@ -42,6 +46,8 @@ function love.load()
 
     table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
     table.insert(obstacles, platform)
+
+    zero = dofile("zero_sprites.lua")
 end
 
 local function collide(o1, o2)
@@ -112,6 +118,11 @@ end
 
 function love.draw()
 
+    love.graphics.draw(zero.image, --The image
+        --Current frame of the current animation
+        zero.animations.idle[1],
+        player.x,
+        player.y)
 
     drawBox(platform)
 
