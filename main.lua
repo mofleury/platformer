@@ -15,7 +15,7 @@ function love.load()
     if arg[#arg] == "-debug" then require("mobdebug").start()
     end
     if arg[#arg] == "-ideadebug" then
-        package.path = [[/home/mofleury/.IdeaIC2016.3/config/plugins/Lua/classes/mobdebug/?.lua;]] .. package.path
+        package.path = [[/home/mofleury/.IdeaIC2016.3/config/plugins/Lua/mobdebug/?.lua;]] .. package.path
         require("mobdebug").start()
     end
 
@@ -35,6 +35,8 @@ function love.load()
 
     player.dx = 32
     player.dy = 32
+
+    player.orientation = 1
 
     player.speed = 200
 
@@ -125,10 +127,12 @@ end
 function love.update(dt)
 
     if love.keyboard.isDown('d') then
+        player.orientation = 1
         if player.x < (screen.dx - player.dx) then
             player:setX(player.x + player.speed * dt)
         end
     elseif love.keyboard.isDown('a') then
+        player.orientation = -1
         if player.x > 0 then
             player:setX(player.x - (player.speed * dt))
         end
@@ -156,7 +160,7 @@ function love.update(dt)
 
     if (colliding) then
 
-       -- debug_data.collision = details
+        -- debug_data.collision = details
         if (details.bottom or details.top) then
             player.y_velocity = 0
             player:setY(player.oldy)
@@ -213,5 +217,5 @@ function love.draw()
         drawBox(o)
     end
 
-    zero.draw(player.x, player.y)
+    zero.draw(player)
 end
