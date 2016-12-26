@@ -9,6 +9,7 @@ screen = {}
 zero = nil
 
 debug_data = {}
+anim_debug_data = {}
 
 animation = require "animation"
 

@@ -7,6 +7,7 @@ animators = {}
 screen = {}
 
 debug_data = {}
+anim_debug_data = {}
 
 animation = require "animation"
 
@@ -66,9 +67,13 @@ function love.update(dt)
         current_anim = current_anim - 1
         released = false
         reset = true
+    elseif released and love.keyboard.isDown('s') then
+        player.orientation = -1 * player.orientation
+        released = false
+        reset = true
     end
 
-    if not (love.keyboard.isDown('d') or love.keyboard.isDown('a')) then
+    if not (love.keyboard.isDown('d') or love.keyboard.isDown('a')or love.keyboard.isDown('s')) then
         released = true
     end
 
@@ -115,6 +120,6 @@ function love.draw()
     zero.draw()
 
 
-    deepPrint(debug_data)
-    debug_data = {}
+    deepPrint(anim_debug_data)
+    anim_debug_data = {}
 end

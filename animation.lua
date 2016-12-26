@@ -12,31 +12,36 @@ function animation.animator(spritesheet, object)
     local time_elapsed = 0
 
     function animator.draw()
-        debug_data.index = index
+        anim_debug_data.index = index
 
-        local xDraw
-        if (object.orientation == 1) then
-            xDraw = object.x
-        else
-            xDraw = object.x + spritesheet.animations[object.state][index + 1].dy
-        end
+
+        local frame = spritesheet.animations[object.state][index + 1]
+
+
+        local xCenter = object.x + object.dx / 2
+        local yCenter = object.y + object.dy / 2
+
+        local xDraw = xCenter - frame.dx / 2
+        local yDraw = yCenter + frame.dy / 2
+
         local xScale
         if (object.orientation == 1) then
             xScale = 1
         else
             xScale = -1
+            xDraw = xDraw + frame.dx
         end
 
         love.graphics.draw(spritesheet.image, --The image
             --Current frame of the current animation
             spritesheet.animations[object.state][index + 1].q,
             xDraw,
-            screen.dy - spritesheet.animations[object.state][index + 1].dy - object.y,
+            screen.dy - yDraw,
             0,
             xScale,
             1)
 
-        debug_data.sprite = spritesheet.animations[object.state][index + 1]
+        anim_debug_data.sprite = frame
     end
 
     function animator.update(dt)

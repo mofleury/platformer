@@ -12,43 +12,37 @@ do
 
     local animations = {
         idle = {
-            quadAt(3, 12, 38, 44),
-            quadAt(3, 12, 38, 44),
-            quadAt(613, 5, 38, 44),
-            quadAt(613, 5, 38, 44),
-            quadAt(660, 4, 38, 44),
-            quadAt(660, 4, 38, 44),
-            quadAt(706, 4, 38, 44),
-            quadAt(706, 4, 38, 44),
-        },
-        running_start = {
-            quadAt(48, 12, 46, 44)
+            quadAt(3, 9, 38, 45),
+            quadAt(3, 9, 38, 45),
+            quadAt(43, 9, 38, 45),
+            quadAt(43, 9, 38, 45),
+            quadAt(82, 9, 38, 45),
+            quadAt(82, 9, 38, 45),
+            quadAt(121, 9, 38, 45),
+            quadAt(121, 9, 38, 45),
         },
         running = {
-            quadAt(100, 7, 43, 49),
-            quadAt(148, 5, 41, 49),
-            quadAt(199, 5, 42, 49),
-            quadAt(253, 5, 41, 49),
-            quadAt(304, 3, 42, 49),
-            quadAt(352, 2, 42, 49),
-            quadAt(398, 4, 41, 49),
-            quadAt(445, 5, 47, 49),
-            quadAt(499, 6, 47, 49),
-            quadAt(553, 2, 46, 49)
+            quadAt(224, 7, 60, 47),
+            quadAt(284, 7, 60, 47),
+            quadAt(344, 7, 60, 47),
+            quadAt(404, 7, 60, 47),
+            quadAt(464, 7, 60, 47),
+            quadAt(524, 7, 60, 47),
+            quadAt(584, 7, 60, 47),
+            quadAt(644, 7, 60, 47),
+            quadAt(704, 7, 60, 47),
+            quadAt(764, 7, 60, 47)
         },
         jumping = {
-            quadAt(4, 406, 40, 55),
-            quadAt(52, 403, 40, 55),
-            quadAt(95, 402, 40, 55),
-            quadAt(142, 402, 40, 55),
-            quadAt(191, 401, 40, 55),
-            quadAt(238, 390, 42, 69),
-            quadAt(282, 390, 40, 69),
-            quadAt(327, 392, 40, 55),
-        },
-        landing = {
-            quadAt(327, 392, 40, 55),
-            quadAt(371, 397, 40, 44),
+            quadAt(0, 392, 60, 67),
+            quadAt(60, 392, 60, 67),
+            quadAt(120, 392, 60, 67),
+            quadAt(180, 392, 60, 67),
+            quadAt(240, 392, 60, 67),
+            quadAt(300, 392, 60, 67),
+            quadAt(360, 392, 60, 67),
+            quadAt(420, 392, 60, 67),
+            quadAt(480, 392, 60, 67),
         }
     }
 
