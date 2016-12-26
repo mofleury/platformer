@@ -40,13 +40,15 @@ function love.load()
 
     player.y = platform.y + platform.dy + 200
 
-    player.dx = 48
-    player.dy = 48
+    player.dx = 30
+    player.dy = 45
 
     player.orientation = 1
     player.state = "idle"
 
-    player.speed = 200
+    player.x_speed = 200
+
+    player.airborne = true
 
     player.img = love.graphics.newImage('resources/purple.png')
 
@@ -60,6 +62,8 @@ function love.load()
     table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
     table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
     table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
+    table.insert(obstacles, { x = 500, y = 20, dx = 50, dy = 20 })
+    table.insert(obstacles, { x = 600, y = 50, dx = 50, dy = 20 })
     table.insert(obstacles, platform)
 end
 
@@ -96,7 +100,7 @@ local function collide(o1, o2)
             end
         end
 
-        if (math.abs(math.abs(wy) - math.abs(hx)) <= player.speed) then
+        if (math.abs(math.abs(wy) - math.abs(hx)) <= player.x_speed) then
             -- edge case : we are on a corner, we should say that both egdes collide
             if (wy > 0 and hx > 0) then
                 details.bottom = true
@@ -132,36 +136,49 @@ end
 
 function love.update(dt)
 
-    if love.keyboard.isDown('d') then
+    if love.keyboard.isDown('s') then
+        player.x_speed = 400
+
+    else
+        player.x_speed = 200
+    end
+
+    if player.x_speed == 400 then
+        player.state = "dashing"
+    elseif not player.airborne then
+        player.state = "running"
+    else
+        player.state = "jumping"
+    end
+
+    if love.keyboard.isDown('right') then
         player.orientation = 1
-        if (player.y_velocity == 0) then
-            player.state = "running"
-        end
+
         if player.x < (screen.dx - player.dx) then
-            player:setX(player.x + player.speed * dt)
+            player:setX(player.x + player.x_speed * dt)
         end
-    elseif love.keyboard.isDown('a') then
+    elseif love.keyboard.isDown('left') then
         player.orientation = -1
-        if (player.y_velocity == 0) then
-            player.state = "running"
-        end
+
         if player.x > 0 then
-            player:setX(player.x - (player.speed * dt))
+            player:setX(player.x - (player.x_speed * dt))
         end
-    elseif (player.y_velocity == 0) then
+    elseif (not player.airborne) then
         player.state = "idle"
     end
 
-    if love.keyboard.isDown('space') then
+    if love.keyboard.isDown('a') then
         if player.y_velocity == 0 then
             player.y_velocity = player.jump_height
-            player.state = "jumping"
+            player.airborne = true
         end
     elseif player.y_velocity > 0 then
         -- mid jump, but not hitting jum key anymore : small jump
         player.y_velocity = 0
---        player.state = "landing"
+        --        player.state = "landing"
     end
+
+
 
     player:setY(player.y + player.y_velocity * dt)
     player.y_velocity = player.y_velocity + player.gravity * dt
@@ -180,6 +197,10 @@ function love.update(dt)
         if (details.bottom or details.top) then
             player.y_velocity = 0
             player:setY(player.oldy)
+        end
+
+        if (details.bottom) then
+            player.airborne = false
         end
 
         if (details.left or details.right) then
