@@ -1,3 +1,6 @@
+animation = require "animation"
+collision = require "collision"
+
 platform = {}
 player = {}
 
@@ -11,8 +14,7 @@ zero = nil
 debug_data = {}
 anim_debug_data = {}
 
-animation = require "animation"
-collision = require "collision"
+
 
 function love.load()
     if arg[#arg] == "-debug" then require("mobdebug").start()
@@ -51,8 +53,6 @@ function love.load()
 
     player.airborne = true
 
-    player.img = love.graphics.newImage('resources/purple.png')
-
     player.ground = player.y - 1
 
     player.y_velocity = 0
@@ -60,11 +60,16 @@ function love.load()
     player.jump_height = 300
     player.gravity = -800
 
+    player.dash_timer = 0
+    player.dash_credit = 1
+
     table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
     table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
     table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
     table.insert(obstacles, { x = 500, y = 20, dx = 50, dy = 20 })
     table.insert(obstacles, { x = 600, y = 50, dx = 50, dy = 20 })
+    table.insert(obstacles, { x = 0, y = 0, dx = 10, dy = screen.dy })
+    table.insert(obstacles, { x = screen.dx - 10, y = 0, dx = 10, dy = screen.dy })
     table.insert(obstacles, platform)
 end
 
@@ -81,39 +86,74 @@ end
 
 function love.update(dt)
 
-    if love.keyboard.isDown('s') then
-        player.x_speed = 400
+    --may need to cancel dash
+    if love.keyboard.isDown('right') and player.orientation == -1 then
+        player.dash_timer = 0
+    end
+    if love.keyboard.isDown('left') and player.orientation == 1 then
+        player.dash_timer = 0
+    end
 
+    if love.keyboard.isDown('s') then
+        if player.dash_timer <= 0 and player.dash_credit > 0 then
+            player.dash_timer = 0.25
+            player.dash_credit = player.dash_credit - 1
+        end
+    elseif not player.airborne then
+        player.dash_credit = 1
+    end
+
+
+    if (player.dash_timer > 0) then
+        player.dash_timer = player.dash_timer - dt
+    end
+
+    local dashing = false
+
+    debug_data.player = player
+
+    if (player.dash_timer > 0) then
+        dashing = true
+        player.x_speed = 450
+        player.y_velocity = 0
     else
         player.x_speed = 200
     end
 
-    if player.x_speed == 400 then
+    if dashing then
         player.state = "dashing"
     elseif not player.airborne then
         player.state = "running"
-    else
-        player.state = "jumping"
+    elseif not dashing then
+        if player.y_velocity > 0 then
+            player.state = "jumping"
+        else
+            player.state = "falling"
+        end
     end
 
+
     if love.keyboard.isDown('right') then
+
         player.orientation = 1
 
-        if player.x < (screen.dx - player.dx) then
-            player:setX(player.x + player.x_speed * dt)
-        end
+        player:setX(player.x + player.x_speed * dt)
     elseif love.keyboard.isDown('left') then
+
         player.orientation = -1
 
-        if player.x > 0 then
-            player:setX(player.x - (player.x_speed * dt))
-        end
-    elseif (not player.airborne) then
+        player:setX(player.x - (player.x_speed * dt))
+
+    elseif dashing then
+
+        player:setX(player.x + player.orientation * (player.x_speed * dt))
+
+    elseif not player.airborne then
         player.state = "idle"
     end
 
     if love.keyboard.isDown('a') then
-        if player.y_velocity == 0 then
+        if not player.airborne then
             player.y_velocity = player.jump_height
             player.airborne = true
         end
@@ -124,7 +164,10 @@ function love.update(dt)
     end
 
     player:setY(player.y + player.y_velocity * dt)
-    player.y_velocity = player.y_velocity + player.gravity * dt
+
+    if player.airborne and not dashing then
+        player.y_velocity = player.y_velocity + player.gravity * dt
+    end
 
     local colliding, details = false, {}
     for i, o in ipairs(obstacles) do
@@ -136,6 +179,8 @@ function love.update(dt)
             end
         end
     end
+
+    debug_data.colliding = colliding
 
     if (colliding) then
 
