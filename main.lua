@@ -62,6 +62,7 @@ function love.load()
 
     player.dash_timer = 0
     player.dash_credit = 1
+    player.powerjump = false
 
     table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
     table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
@@ -86,6 +87,8 @@ end
 
 function love.update(dt)
 
+    debug_data.player = player
+
     --may need to cancel dash
     if love.keyboard.isDown('right') and player.orientation == -1 then
         player.dash_timer = 0
@@ -96,6 +99,7 @@ function love.update(dt)
 
     if love.keyboard.isDown('s') then
         if player.dash_timer <= 0 and player.dash_credit > 0 then
+            player.dashing = true
             player.dash_timer = 0.25
             player.dash_credit = player.dash_credit - 1
         end
@@ -108,23 +112,23 @@ function love.update(dt)
         player.dash_timer = player.dash_timer - dt
     end
 
-    local dashing = false
-
-    debug_data.player = player
 
     if (player.dash_timer > 0) then
-        dashing = true
+
         player.x_speed = 450
-        player.y_velocity = 0
-    else
+        if not player.powerjump then
+            player.y_velocity = 0
+        end
+    elseif not player.powerjump then
+        player.dashing = false
         player.x_speed = 200
     end
 
-    if dashing then
+    if player.dashing then
         player.state = "dashing"
     elseif not player.airborne then
         player.state = "running"
-    elseif not dashing then
+    elseif not player.dashing then
         if player.y_velocity > 0 then
             player.state = "jumping"
         else
@@ -144,7 +148,7 @@ function love.update(dt)
 
         player:setX(player.x - (player.x_speed * dt))
 
-    elseif dashing then
+    elseif player.dashing or player.powerjump then
 
         player:setX(player.x + player.orientation * (player.x_speed * dt))
 
@@ -156,6 +160,10 @@ function love.update(dt)
         if not player.airborne then
             player.y_velocity = player.jump_height
             player.airborne = true
+            if player.dashing then
+                player.powerjump = true
+                player.dashing = false
+            end
         end
     elseif player.y_velocity > 0 then
         -- mid jump, but not hitting jum key anymore : small jump
@@ -165,7 +173,7 @@ function love.update(dt)
 
     player:setY(player.y + player.y_velocity * dt)
 
-    if player.airborne and not dashing then
+    if player.airborne then
         player.y_velocity = player.y_velocity + player.gravity * dt
     end
 
@@ -192,6 +200,7 @@ function love.update(dt)
 
         if (details.bottom) then
             player.airborne = false
+            player.powerjump = false
         end
 
         if (details.left or details.right) then
