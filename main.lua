@@ -74,17 +74,6 @@ function love.load()
     table.insert(obstacles, platform)
 end
 
-function player:setX(x)
-    self.oldx, self.x = self.x, x
-end
-
-
-function player:setY(y)
-    self.oldy, self.y = self.y, y
-end
-
-
-
 function love.update(dt)
 
     debug_data.player = player
@@ -143,16 +132,16 @@ function love.update(dt)
 
         player.orientation = 1
 
-        player:setX(player.x + player.x_speed * dt)
+        player.x = (player.x + player.x_speed * dt)
     elseif love.keyboard.isDown('left') then
 
         player.orientation = -1
 
-        player:setX(player.x - (player.x_speed * dt))
+        player.x = (player.x - (player.x_speed * dt))
 
     elseif player.dashing then
 
-        player:setX(player.x + player.orientation * (player.x_speed * dt))
+        player.x = (player.x + player.orientation * (player.x_speed * dt))
 
     elseif not player.airborne then
         player.state = "idle"
@@ -173,7 +162,7 @@ function love.update(dt)
         --        player.state = "landing"
     end
 
-    player:setY(player.y + player.y_velocity * dt)
+    player.y = (player.y + player.y_velocity * dt)
 
     if player.airborne then
         player.y_velocity = player.y_velocity + player.gravity * dt
@@ -185,34 +174,49 @@ function love.update(dt)
         if (c) then
             colliding = true
             for k, e in pairs(d) do
-                details[k] = e
+                details[k] = o
             end
         end
     end
 
     debug_data.colliding = colliding
+    --    debug_data.details = details
 
     if (colliding) then
 
-        -- debug_data.collision = details
-        if (details.bottom or details.top) then
-            player.y_velocity = 0
-            player:setY(player.oldy)
-        end
-
-        if (details.bottom) then
-            player.airborne = false
-            player.powerjump = false
-        end
+        --        debug_data.collision = details
 
         if (details.left or details.right) then
-            player:setX(player.oldx)
+            if (details.left) then
+                player.x = (details.left.x + details.left.dx + 1)
+            else -- right
+                player.x = (details.right.x - player.dx - 1)
+            end
+        elseif (details.bottom or details.top) then
+            player.y_velocity = 0
+            if details.bottom then
+                player.y = (details.bottom.y + details.bottom.dy)
+                player.airborne = false
+                player.powerjump = false
+            else -- top
+                player.y = (details.top.y - player.dy - 1)
+            end
+        end
+
+    elseif not player.airborne then
+        local below = { x = player.x, y = player.y - 2, dx = player.dx, dy = 2 }
+        local nothingBelow = true
+        for i, o in ipairs(obstacles) do
+            if (collision.overlap(below, o)) then
+                nothingBelow = false
+                break
+            end
+        end
+
+        if nothingBelow then
+            player.airborne = true
         end
     end
-
-    -- cleanup original values for next iteration
-    player.oldx = player.x
-    player.oldy = player.y
 
     for i, a in ipairs(animators) do
         a.update(dt)
