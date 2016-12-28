@@ -92,9 +92,11 @@ function love.update(dt)
     --may need to cancel dash
     if love.keyboard.isDown('right') and player.orientation == -1 then
         player.dash_timer = 0
+        player.dashing = false
     end
     if love.keyboard.isDown('left') and player.orientation == 1 then
         player.dash_timer = 0
+        player.dashing = false
     end
 
     if love.keyboard.isDown('s') then
@@ -148,7 +150,7 @@ function love.update(dt)
 
         player:setX(player.x - (player.x_speed * dt))
 
-    elseif player.dashing or player.powerjump then
+    elseif player.dashing then
 
         player:setX(player.x + player.orientation * (player.x_speed * dt))
 
