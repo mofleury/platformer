@@ -1,7 +1,6 @@
 animation = require "animation"
 collision = require "collision"
 
-platform = {}
 player = {}
 
 obstacles = {}
@@ -33,15 +32,11 @@ function love.load()
     local zero = animation.animator(zero_spritesheet, player)
     table.insert(animators, zero)
 
-    platform.dx = screen.dx
-    platform.dy = 20
 
-    platform.x = 0
-    platform.y = 0
 
     player.x = screen.dx / 2
 
-    player.y = platform.y + platform.dy + 200
+    player.y = 200
 
     player.dx = 30
     player.dy = 45
@@ -69,9 +64,14 @@ function love.load()
     table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
     table.insert(obstacles, { x = 500, y = 20, dx = 50, dy = 20 })
     table.insert(obstacles, { x = 600, y = 50, dx = 50, dy = 20 })
+    table.insert(obstacles, { x = 100, y = 120, dx = 200, dy = 20 })
+    table.insert(obstacles, { x = 200, y = 140, dx = 200, dy = 20 })
+
+    table.insert(obstacles, { x = 400, y = 100, dx = 20, dy = 20 })
+
     table.insert(obstacles, { x = 0, y = 0, dx = 10, dy = screen.dy })
     table.insert(obstacles, { x = screen.dx - 10, y = 0, dx = 10, dy = screen.dy })
-    table.insert(obstacles, platform)
+    table.insert(obstacles, { x = 0, y = 0, dx = screen.dx, dy = 20 })
 end
 
 function love.update(dt)
@@ -180,11 +180,10 @@ function love.update(dt)
     end
 
     debug_data.colliding = colliding
-    --    debug_data.details = details
+    debug_data.details = details
 
     if (colliding) then
 
-        --        debug_data.collision = details
 
         if (details.left or details.right) then
             if (details.left) then
@@ -192,7 +191,8 @@ function love.update(dt)
             else -- right
                 player.x = (details.right.x - player.dx - 1)
             end
-        elseif (details.bottom or details.top) then
+        end
+        if (details.bottom or details.top) then
             player.y_velocity = 0
             if details.bottom then
                 player.y = (details.bottom.y + details.bottom.dy)
