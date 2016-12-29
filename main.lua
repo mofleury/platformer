@@ -115,36 +115,42 @@ function love.update(dt)
         player.x_speed = 200
     end
 
-    if player.dashing then
-        player.state = "dashing"
-    elseif not player.airborne then
-        player.state = "running"
-    elseif not player.dashing then
-        if player.y_velocity > 0 then
-            player.state = "jumping"
-        else
-            player.state = "falling"
-        end
-    end
 
+    local moving = false
 
     if love.keyboard.isDown('right') then
 
         player.orientation = 1
 
         player.x = (player.x + player.x_speed * dt)
+
+        moving = true
     elseif love.keyboard.isDown('left') then
 
         player.orientation = -1
 
         player.x = (player.x - (player.x_speed * dt))
 
+        moving = true
     elseif player.dashing then
 
         player.x = (player.x + player.orientation * (player.x_speed * dt))
-
-    elseif not player.airborne then
+    elseif not (player.airborne or player.state == "landing") then
         player.state = "idle"
+    end
+
+    if player.dashing then
+        player.state = "dashing"
+    elseif not player.airborne then
+        if moving then
+            player.state = "running"
+        end
+    elseif not player.dashing then
+        if player.y_velocity > 0 then
+            player.state = "jumping"
+        else
+            player.state = "falling"
+        end
     end
 
     if love.keyboard.isDown('a') then
@@ -195,9 +201,14 @@ function love.update(dt)
         if (details.bottom or details.top) then
             player.y_velocity = 0
             if details.bottom then
+                if player.airborne then
+                    player.state = "landing"
+                end
+
                 player.y = (details.bottom.y + details.bottom.dy)
                 player.airborne = false
                 player.powerjump = false
+
             else -- top
                 player.y = (details.top.y - player.dy - 1)
             end

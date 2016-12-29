@@ -54,8 +54,15 @@ function animation.animator(spritesheet, object)
         anim = spritesheet.animations[object.state]
 
         time_elapsed = time_elapsed + dt
-        if (time_elapsed > anim.frame_duration * animation_slowdown_factor) then
+        if time_elapsed > anim.frame_duration * animation_slowdown_factor then
             index = (index + 1) % table.getn(anim)
+
+            if index == 0 then
+                if anim.next ~= nil then
+                    object.state = anim.next
+                    previous_state = anim.next
+                end
+            end
 
             time_elapsed = 0
         end

@@ -46,8 +46,9 @@ do
         },
         landing = {
             frame_duration = 0.05,
-            quadAt(420, 392, 60, 67),
-            quadAt(480, 392, 60, 67),
+            quadAt(420, 408, 60, 51),
+            quadAt(480, 416, 60, 43),
+            next = "idle"
         },
         dashing = {
             frame_duration = 0.05,
@@ -58,12 +59,19 @@ do
             quadAt(239, 67, 68, 51),
             quadAt(311, 67, 78, 51),
             quadAt(407, 67, 78, 51),
+        },
+        wall_landing = {
+            quadAt(323, 474, 39, 50),
+            quadAt(378, 474, 34, 50),
+            next = "wall_sliding"
+        },
+        wall_sliding = {
+            quadAt(323, 474, 39, 50)
         }
     }
 
 
     return {
-
         image = sourceImage,
         animations = animations
     }
