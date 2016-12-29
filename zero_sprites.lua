@@ -61,12 +61,21 @@ do
             quadAt(407, 67, 78, 51),
         },
         wall_landing = {
+            frame_duration = 0.05,
             quadAt(323, 474, 39, 50),
             quadAt(378, 474, 34, 50),
             next = "wall_sliding"
         },
         wall_sliding = {
-            quadAt(323, 474, 39, 50)
+            frame_duration = 0.05,
+            quadAt(423, 474, 39, 50)
+        },
+        wall_jumping = {
+            frame_duration = 0.05,
+            quadAt(520, 467, 44, 52),
+            quadAt(562, 467, 44, 52),
+            next = "jumping"
+
         }
     }
 

@@ -46,12 +46,18 @@ function animation.animator(spritesheet, object)
 
     function animator.update(dt)
         if (object.state ~= previous_state) then
-            index = 0
-            time_elapsed = 0
-            previous_state = object.state
+
+            -- if state is the next state of the "current", keep it
+            if previous_state ~= nil and spritesheet.animations[object.state].next == previous_state then
+                object.state = previous_state
+            else
+                index = 0
+                time_elapsed = 0
+                previous_state = object.state
+            end
         end
 
-        anim = spritesheet.animations[object.state]
+        local anim = spritesheet.animations[object.state]
 
         time_elapsed = time_elapsed + dt
         if time_elapsed > anim.frame_duration * animation_slowdown_factor then

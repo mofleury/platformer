@@ -13,7 +13,7 @@ zero = nil
 debug_data = {}
 anim_debug_data = {}
 
-
+local walling_speed_cap = -200
 
 function love.load()
     if arg[#arg] == "-debug" then require("mobdebug").start()
@@ -57,7 +57,10 @@ function love.load()
 
     player.dash_timer = 0
     player.dash_credit = 1
+    player.wall_jump_timer = 0
+
     player.powerjump = false
+    player.walling = false
 
     table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
     table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
@@ -68,6 +71,7 @@ function love.load()
     table.insert(obstacles, { x = 200, y = 140, dx = 200, dy = 20 })
 
     table.insert(obstacles, { x = 400, y = 100, dx = 20, dy = 20 })
+    table.insert(obstacles, { x = 200, y = 100, dx = 20, dy = 600 })
 
     table.insert(obstacles, { x = 0, y = 0, dx = 10, dy = screen.dy })
     table.insert(obstacles, { x = screen.dx - 10, y = 0, dx = 10, dy = screen.dy })
@@ -77,6 +81,8 @@ end
 function love.update(dt)
 
     debug_data.player = player
+
+
 
     --may need to cancel dash
     if love.keyboard.isDown('right') and player.orientation == -1 then
@@ -94,13 +100,16 @@ function love.update(dt)
             player.dash_timer = 0.25
             player.dash_credit = player.dash_credit - 1
         end
-    elseif not player.airborne then
+    elseif not player.airborne or player.walling then
         player.dash_credit = 1
     end
 
 
     if (player.dash_timer > 0) then
         player.dash_timer = player.dash_timer - dt
+    end
+    if (player.wall_jump_timer > 0) then
+        player.wall_jump_timer = player.wall_jump_timer - dt
     end
 
 
@@ -118,20 +127,22 @@ function love.update(dt)
 
     local moving = false
 
-    if love.keyboard.isDown('right') then
+    if love.keyboard.isDown('right') and player.wall_jump_timer <= 0 then
 
         player.orientation = 1
 
         player.x = (player.x + player.x_speed * dt)
 
         moving = true
-    elseif love.keyboard.isDown('left') then
+    elseif love.keyboard.isDown('left') and player.wall_jump_timer <= 0 then
 
         player.orientation = -1
 
         player.x = (player.x - (player.x_speed * dt))
 
         moving = true
+    elseif player.wall_jump_timer > 0 then
+        player.x = (player.x - player.orientation * (player.x_speed * dt))
     elseif player.dashing then
 
         player.x = (player.x + player.orientation * (player.x_speed * dt))
@@ -154,13 +165,22 @@ function love.update(dt)
     end
 
     if love.keyboard.isDown('a') then
-        if not player.airborne then
+        if not player.airborne or player.walling then
             player.y_velocity = player.jump_height
             player.airborne = true
+
+
             if player.dashing then
                 player.powerjump = true
                 player.dashing = false
             end
+
+            if player.walling then
+                player.state = "wall_jumping"
+                player.wall_jump_timer = 0.2
+            end
+
+            player.walling = false
         end
     elseif player.y_velocity > 0 then
         -- mid jump, but not hitting jum key anymore : small jump
@@ -172,6 +192,9 @@ function love.update(dt)
 
     if player.airborne then
         player.y_velocity = player.y_velocity + player.gravity * dt
+        if player.walling then
+            player.y_velocity = math.max(walling_speed_cap, player.y_velocity)
+        end
     end
 
     local colliding, details = false, {}
@@ -194,8 +217,18 @@ function love.update(dt)
         if (details.left or details.right) then
             if (details.left) then
                 player.x = (details.left.x + details.left.dx + 1)
+                if player.airborne and love.keyboard.isDown('left') then
+                    player.state = "wall_landing"
+                    player.walling = true
+                    player.x_speed = 200
+                end
             else -- right
                 player.x = (details.right.x - player.dx - 1)
+                if player.airborne and love.keyboard.isDown('right') then
+                    player.state = "wall_landing"
+                    player.walling = true
+                    player.x_speed = 200
+                end
             end
         end
         if (details.bottom or details.top) then
@@ -208,6 +241,7 @@ function love.update(dt)
                 player.y = (details.bottom.y + details.bottom.dy)
                 player.airborne = false
                 player.powerjump = false
+                player.walling = false
 
             else -- top
                 player.y = (details.top.y - player.dy - 1)
@@ -227,6 +261,8 @@ function love.update(dt)
         if nothingBelow then
             player.airborne = true
         end
+    else
+        player.walling = false
     end
 
     for i, a in ipairs(animators) do
