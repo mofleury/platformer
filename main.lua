@@ -72,6 +72,7 @@ function love.load()
     table.insert(obstacles, { x = 600, y = 50, dx = 50, dy = 20 })
     table.insert(obstacles, { x = 100, y = 120, dx = 200, dy = 20 })
     table.insert(obstacles, { x = 200, y = 140, dx = 200, dy = 20 })
+    table.insert(obstacles, { x = 550, y = 200, dx = 200, dy = 20 })
 
     table.insert(obstacles, { x = 400, y = 100, dx = 20, dy = 20 })
     table.insert(obstacles, { x = 200, y = 100, dx = 20, dy = 600 })
