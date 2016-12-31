@@ -302,6 +302,15 @@ function love.update(dt)
             end
         end
 
+        -- corner case : when running on the edge of a block towards the block, we can stay in levitation while running
+        if details.bottom then
+            if details.left == details.bottom or details.right == details.bottom then
+                -- on the edge, allow to step on block
+                player.y = player.y + 1
+            end
+        end
+
+
     elseif not player.airborne then
         local below = { x = player.x, y = player.y - 2, dx = player.dx, dy = 2 }
         local nothingBelow = true
