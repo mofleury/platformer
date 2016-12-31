@@ -61,6 +61,8 @@ function love.load()
     player.wall_jump_timer = 0
 
     player.powerjump = false
+    player.free_powerjump = false
+
     player.walling = false
 
     table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
@@ -113,6 +115,10 @@ function love.update(dt)
     debug_data.buttons_released = buttons_released
 
     update_buttons(love.keyboard)
+
+    if love.keyboard.isDown('right') or love.keyboard.isDown('left') then
+        player.free_powerjump = false
+    end
 
     --may need to cancel dash
     if love.keyboard.isDown('right') and player.orientation == -1 then
@@ -173,6 +179,8 @@ function love.update(dt)
         moving = true
     elseif player.wall_jump_timer > 0 then
         player.x = (player.x - player.orientation * (player.x_speed * dt))
+    elseif player.free_powerjump then
+        player.x = (player.x + player.orientation * (player.x_speed * dt))
     elseif player.dashing then
 
         player.x = (player.x + player.orientation * (player.x_speed * dt))
@@ -202,6 +210,7 @@ function love.update(dt)
 
             if player.dashing then
                 player.powerjump = true
+                player.free_powerjump = true
                 player.dashing = false
             end
 
@@ -212,6 +221,7 @@ function love.update(dt)
                 -- when walling, powerjump can be done without releasing dash button
                 if love.keyboard.isDown('s') then
                     player.powerjump = true
+                    player.free_powerjump = true
                     player.x_speed = dashing_speed
                 end
             end
@@ -258,6 +268,7 @@ function love.update(dt)
                     player.walling = true
                     if not love.keyboard.isDown('s') then
                         player.powerjump = false
+                        player.free_powerjump = false
                     end
                 end
             else -- right
@@ -268,6 +279,7 @@ function love.update(dt)
 
                     if not love.keyboard.isDown('s') then
                         player.powerjump = false
+                        player.free_powerjump = false
                     end
                 end
             end
@@ -282,6 +294,7 @@ function love.update(dt)
                 player.y = (details.bottom.y + details.bottom.dy)
                 player.airborne = false
                 player.powerjump = false
+                player.free_powerjump = false
                 player.walling = false
 
             else -- top
