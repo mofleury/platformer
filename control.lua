@@ -1,5 +1,6 @@
 local control = {}
 
+local collision = require "collision"
 
 local buttons_released = {}
 local buttons_actionable = {}
@@ -28,7 +29,7 @@ local function was_pressed(button)
     return false
 end
 
-function control.player(player, keys)
+function control.player(player, obstacles, keys)
 
     table.insert(action_buttons, keys.jump)
     table.insert(action_buttons, keys.dash)
@@ -256,9 +257,6 @@ function control.player(player, keys)
                 y_velocity = 0
                 player.y = (details.top.y - player.dy - 1)
             end
-
-
-
 
         elseif not airborne then
             local below = { x = player.x, y = player.y - 2, dx = player.dx, dy = 2 }

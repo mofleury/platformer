@@ -1,24 +1,22 @@
-animation = require "animation"
-collision = require "collision"
-control = require "control"
+local animation = require "animation"
+local control = require "control"
 
 
 
-obstacles = {}
-animators = {}
-controllers = {}
-players = {}
+local obstacles = {}
+local animators = {}
+local controllers = {}
+local players = {}
 
-screen = {}
+local screen = {}
 
 debug_data = {}
-anim_debug_data = {}
 
 function create_player(x, y, keys)
     local player = {}
 
     local zero_spritesheet = dofile("zero_sprites.lua")
-    local animator = animation.animator(zero_spritesheet, player)
+    local animator = animation.animator(zero_spritesheet, player, screen)
     table.insert(animators, animator)
 
     player.x = x
@@ -30,7 +28,7 @@ function create_player(x, y, keys)
     player.orientation = 1
     player.state = "idle"
 
-    table.insert(controllers, control.player(player, keys))
+    table.insert(controllers, control.player(player, obstacles, keys))
 
     return player
 end

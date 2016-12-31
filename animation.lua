@@ -2,7 +2,7 @@ local animation = {}
 
 local animation_slowdown_factor = 1
 
-function animation.animator(spritesheet, object)
+function animation.animator(spritesheet, object, screen)
 
     local animator = {}
 
