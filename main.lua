@@ -2,19 +2,38 @@ animation = require "animation"
 collision = require "collision"
 control = require "control"
 
-player = {}
+
 
 obstacles = {}
 animators = {}
 controllers = {}
+players = {}
 
 screen = {}
-
-zero = nil
 
 debug_data = {}
 anim_debug_data = {}
 
+function create_player(x, y, keys)
+    local player = {}
+
+    local zero_spritesheet = dofile("zero_sprites.lua")
+    local animator = animation.animator(zero_spritesheet, player)
+    table.insert(animators, animator)
+
+    player.x = x
+    player.y = y
+
+    player.dx = 30
+    player.dy = 45
+
+    player.orientation = 1
+    player.state = "idle"
+
+    table.insert(controllers, control.player(player, keys))
+
+    return player
+end
 
 
 function love.load()
@@ -30,24 +49,10 @@ function love.load()
     screen.dx = love.graphics.getWidth() / 2
     screen.dy = love.graphics.getHeight() / 2
 
-    local zero_spritesheet = dofile("zero_sprites.lua")
-    local zero = animation.animator(zero_spritesheet, player)
-    table.insert(animators, zero)
+    table.insert(players, create_player(screen.dx / 2, 200, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
 
 
-
-    player.x = screen.dx / 2
-
-    player.y = 200
-
-    player.dx = 30
-    player.dy = 45
-
-    player.orientation = 1
-    player.state = "idle"
-
-    table.insert(controllers, control.player(player, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
-
+    table.insert(players, create_player(screen.dx / 2 + 50, 200, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
 
 
     table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
@@ -71,7 +76,7 @@ end
 
 function love.update(dt)
 
-    debug_data.player = player
+    debug_data.players = players
 
     for i, c in ipairs(controllers) do
         c.update(dt)

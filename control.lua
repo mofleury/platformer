@@ -7,6 +7,9 @@ local buttons_actionable = {}
 local action_buttons = {}
 
 local function update_buttons(keyboard)
+
+    debug_data.controls = action_buttons
+
     for i, b in ipairs(action_buttons) do
         if keyboard.isDown(b) then
             if buttons_released[b] == true then
@@ -75,7 +78,7 @@ function control.player(player, keys)
             dashing = false
         end
 
-        if was_pressed('s') then
+        if was_pressed(keys.dash) then
             if dash_timer <= 0 and dash_credit > 0 and not powerjump and not walling then
                 dashing = true
                 dash_timer = 0.25
