@@ -8,8 +8,6 @@ local action_buttons = {}
 
 local function update_buttons(keyboard)
 
-    debug_data.controls = action_buttons
-
     for i, b in ipairs(action_buttons) do
         if keyboard.isDown(b) then
             if buttons_released[b] == true then
@@ -36,6 +34,7 @@ function control.player(player, keys)
     table.insert(action_buttons, keys.dash)
 
     local controller = {}
+    controller.debug_data = {}
 
     local walling_speed_cap = -200
     local running_speed = 200
@@ -202,8 +201,7 @@ function control.player(player, keys)
             end
         end
 
-        debug_data.colliding = colliding
-        debug_data.details = details
+        controller.debug_data[player] = { colliding = colliding, details = details }
 
         if (colliding) then
 

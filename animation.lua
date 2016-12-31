@@ -12,7 +12,6 @@ function animation.animator(spritesheet, object)
     local time_elapsed = 0
 
     function animator.draw()
-        anim_debug_data.index = index
 
 
         local frame = spritesheet.animations[object.state][index + 1]
@@ -40,7 +39,6 @@ function animation.animator(spritesheet, object)
             xScale,
             1)
 
-        anim_debug_data.sprite = frame
     end
 
     function animator.update(dt)

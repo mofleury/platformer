@@ -1,7 +1,6 @@
 local collision = {}
 
 function collision.overlap(o1, o2)
-    debug_data.checks = {o1=o1,o2=o2}
     return (o1.x < o2.x + o2.dx and
             o1.x + o1.dx > o2.x and
             o1.y < o2.y + o2.dy and

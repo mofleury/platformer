@@ -77,11 +77,11 @@ end
 function love.update(dt)
 
     debug_data.players = players
+    --    debug_data.controllers = controllers
 
     for i, c in ipairs(controllers) do
         c.update(dt)
     end
-
 
     for i, a in ipairs(animators) do
         a.update(dt)
@@ -99,10 +99,10 @@ local function deepPrint(t)
     local function deepPrintWithGap(t, gap, buffer)
         for key, value in pairs(t) do
             if (type(value) == "table") then
-                table.insert(buffer, gap .. key)
+                table.insert(buffer, gap .. tostring(key))
                 deepPrintWithGap(value, gap .. "  ", buffer)
             else
-                table.insert(buffer, gap .. key .. " = " .. tostring(value))
+                table.insert(buffer, gap .. tostring(key) .. " = " .. tostring(value))
             end
         end
     end
