@@ -19,10 +19,9 @@ function animation.animator(spritesheet, object)
 
 
         local xCenter = object.x + object.dx / 2
-        local yCenter = object.y + object.dy / 2
 
         local xDraw = xCenter - frame.dx / 2
-        local yDraw = yCenter + frame.dy / 2
+        local yDraw = object.y + frame.dy
 
         local xScale
         if (object.orientation == 1) then
