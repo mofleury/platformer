@@ -13,7 +13,10 @@ zero = nil
 debug_data = {}
 anim_debug_data = {}
 
+
 local walling_speed_cap = -200
+local running_speed = 200
+local dashing_speed = 450
 
 function love.load()
     if arg[#arg] == "-debug" then require("mobdebug").start()
@@ -44,11 +47,9 @@ function love.load()
     player.orientation = 1
     player.state = "idle"
 
-    player.x_speed = 200
+    player.x_speed = running_speed
 
     player.airborne = true
-
-    player.ground = player.y - 1
 
     player.y_velocity = 0
 
@@ -78,11 +79,40 @@ function love.load()
     table.insert(obstacles, { x = 0, y = 0, dx = screen.dx, dy = 20 })
 end
 
+
+buttons_released = {}
+buttons_actionable = {}
+
+action_buttons = { 's', 'a' }
+
+local function update_buttons(keyboard)
+    for i, b in ipairs(action_buttons) do
+        if keyboard.isDown(b) then
+            if buttons_released[b] == true then
+                buttons_actionable[b] = true
+                buttons_released[b] = false
+            end
+        else
+            buttons_released[b] = true
+        end
+    end
+end
+
+local function was_pressed(button)
+    if buttons_actionable[button] == true then
+        buttons_actionable[button] = false
+        return true
+    end
+    return false
+end
+
 function love.update(dt)
 
     debug_data.player = player
+    debug_data.buttons_actionable = buttons_actionable
+    debug_data.buttons_released = buttons_released
 
-
+    update_buttons(love.keyboard)
 
     --may need to cancel dash
     if love.keyboard.isDown('right') and player.orientation == -1 then
@@ -94,8 +124,8 @@ function love.update(dt)
         player.dashing = false
     end
 
-    if love.keyboard.isDown('s') then
-        if player.dash_timer <= 0 and player.dash_credit > 0 then
+    if was_pressed('s') then
+        if player.dash_timer <= 0 and player.dash_credit > 0 and not player.powerjump and not player.walling then
             player.dashing = true
             player.dash_timer = 0.25
             player.dash_credit = player.dash_credit - 1
@@ -115,13 +145,13 @@ function love.update(dt)
 
     if (player.dash_timer > 0) then
 
-        player.x_speed = 450
+        player.x_speed = dashing_speed
         if not player.powerjump then
             player.y_velocity = 0
         end
     elseif not player.powerjump then
         player.dashing = false
-        player.x_speed = 200
+        player.x_speed = running_speed
     end
 
 
@@ -164,7 +194,7 @@ function love.update(dt)
         end
     end
 
-    if love.keyboard.isDown('a') then
+    if was_pressed('a') then
         if not player.airborne or player.walling then
             player.y_velocity = player.jump_height
             player.airborne = true
@@ -178,11 +208,17 @@ function love.update(dt)
             if player.walling then
                 player.state = "wall_jumping"
                 player.wall_jump_timer = 0.2
+
+                -- when walling, powerjump can be done without releasing dash button
+                if love.keyboard.isDown('s') then
+                    player.powerjump = true
+                    player.x_speed = dashing_speed
+                end
             end
 
             player.walling = false
         end
-    elseif player.y_velocity > 0 then
+    elseif player.y_velocity > 0 and not love.keyboard.isDown('a') then
         -- mid jump, but not hitting jum key anymore : small jump
         player.y_velocity = 0
         --        player.state = "landing"
@@ -220,14 +256,19 @@ function love.update(dt)
                 if player.airborne and love.keyboard.isDown('left') then
                     player.state = "wall_landing"
                     player.walling = true
-                    player.x_speed = 200
+                    if not love.keyboard.isDown('s') then
+                        player.powerjump = false
+                    end
                 end
             else -- right
                 player.x = (details.right.x - player.dx - 1)
                 if player.airborne and love.keyboard.isDown('right') then
                     player.state = "wall_landing"
                     player.walling = true
-                    player.x_speed = 200
+
+                    if not love.keyboard.isDown('s') then
+                        player.powerjump = false
+                    end
                 end
             end
         end
