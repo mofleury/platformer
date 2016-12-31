@@ -1,10 +1,10 @@
 local control = {}
 
 
-buttons_released = {}
-buttons_actionable = {}
+local buttons_released = {}
+local buttons_actionable = {}
 
-action_buttons = { 's', 'a' }
+local action_buttons = {}
 
 local function update_buttons(keyboard)
     for i, b in ipairs(action_buttons) do
@@ -27,7 +27,11 @@ local function was_pressed(button)
     return false
 end
 
-function control.player(player)
+function control.player(player, keys)
+
+    table.insert(action_buttons, keys.jump)
+    table.insert(action_buttons, keys.dash)
+
     local controller = {}
 
     local walling_speed_cap = -200
@@ -57,16 +61,16 @@ function control.player(player)
     function controller.update(dt)
         update_buttons(love.keyboard)
 
-        if love.keyboard.isDown('right') or love.keyboard.isDown('left') then
+        if love.keyboard.isDown(keys.right) or love.keyboard.isDown(keys.left) then
             free_powerjump = false
         end
 
         --may need to cancel dash
-        if love.keyboard.isDown('right') and player.orientation == -1 then
+        if love.keyboard.isDown(keys.right) and player.orientation == -1 then
             dash_timer = 0
             dashing = false
         end
-        if love.keyboard.isDown('left') and player.orientation == 1 then
+        if love.keyboard.isDown(keys.left) and player.orientation == 1 then
             dash_timer = 0
             dashing = false
         end
@@ -104,14 +108,14 @@ function control.player(player)
 
         local moving = false
 
-        if love.keyboard.isDown('right') and wall_jump_timer <= 0 then
+        if love.keyboard.isDown(keys.right) and wall_jump_timer <= 0 then
 
             player.orientation = 1
 
             player.x = (player.x + x_speed * dt)
 
             moving = true
-        elseif love.keyboard.isDown('left') and wall_jump_timer <= 0 then
+        elseif love.keyboard.isDown(keys.left) and wall_jump_timer <= 0 then
 
             player.orientation = -1
 
@@ -143,7 +147,7 @@ function control.player(player)
             end
         end
 
-        if was_pressed('a') then
+        if was_pressed(keys.jump) then
             if not airborne or walling then
                 y_velocity = jump_height
                 airborne = true
@@ -160,7 +164,7 @@ function control.player(player)
                     wall_jump_timer = 0.2
 
                     -- when walling, powerjump can be done without releasing dash button
-                    if love.keyboard.isDown('s') then
+                    if love.keyboard.isDown(keys.dash) then
                         powerjump = true
                         free_powerjump = true
                         x_speed = dashing_speed
@@ -169,7 +173,7 @@ function control.player(player)
 
                 walling = false
             end
-        elseif y_velocity > 0 and not love.keyboard.isDown('a') then
+        elseif y_velocity > 0 and not love.keyboard.isDown(keys.jump) then
             -- mid jump, but not hitting jum key anymore : small jump
             y_velocity = 0
             --        player.state = "landing"
@@ -214,21 +218,21 @@ function control.player(player)
             if (details.left or details.right) then
                 if (details.left) then
                     player.x = (details.left.x + details.left.dx + 1)
-                    if airborne and love.keyboard.isDown('left') then
+                    if airborne and love.keyboard.isDown(keys.left) then
                         player.state = "wall_landing"
                         walling = true
-                        if not love.keyboard.isDown('s') then
+                        if not love.keyboard.isDown(keys.dash) then
                             powerjump = false
                             free_powerjump = false
                         end
                     end
                 else -- right
                     player.x = (details.right.x - player.dx - 1)
-                    if airborne and love.keyboard.isDown('right') then
+                    if airborne and love.keyboard.isDown(keys.right) then
                         player.state = "wall_landing"
                         walling = true
 
-                        if not love.keyboard.isDown('s') then
+                        if not love.keyboard.isDown(keys.dash) then
                             powerjump = false
                             free_powerjump = false
                         end

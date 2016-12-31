@@ -46,7 +46,7 @@ function love.load()
     player.orientation = 1
     player.state = "idle"
 
-    table.insert(controllers, control.player(player))
+    table.insert(controllers, control.player(player, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
 
 
 
