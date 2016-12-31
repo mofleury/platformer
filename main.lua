@@ -43,6 +43,9 @@ function love.load()
     player.dx = 30
     player.dy = 45
 
+    player.orientation = 1
+    player.state = "idle"
+
     table.insert(controllers, control.player(player))
 
 
@@ -62,10 +65,6 @@ function love.load()
     table.insert(obstacles, { x = 0, y = 0, dx = 10, dy = screen.dy })
     table.insert(obstacles, { x = screen.dx - 10, y = 0, dx = 10, dy = screen.dy })
     table.insert(obstacles, { x = 0, y = 0, dx = screen.dx, dy = 20 })
-
-    for i, c in ipairs(controllers) do
-        c.initialize()
-    end
 end
 
 

@@ -41,7 +41,7 @@ function collision.collide(o1, o2)
             end
         end
 
-        if (math.abs(math.abs(wy) - math.abs(hx)) <= player.x_speed) then
+        if (math.abs(math.abs(wy) - math.abs(hx)) <= 200) then
             -- edge case : we are on a corner, we should say that both egdes collide
             if (wy > 0 and hx > 0) then
                 details.bottom = true
