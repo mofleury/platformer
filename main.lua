@@ -259,6 +259,16 @@ function love.update(dt)
 
     if (colliding) then
 
+        if details.bottom then
+
+            -- corner case : when running on the edge of a block towards the block, we can stay in levitation while running
+            -- in this case, consider collision on bottom only
+            if details.left == details.bottom then
+                details.left = nil
+            elseif details.right == details.bottom then
+                details.right = nil
+            end
+        end
 
         if (details.left or details.right) then
             if (details.left) then
@@ -284,31 +294,24 @@ function love.update(dt)
                 end
             end
         end
-        if (details.bottom or details.top) then
-            player.y_velocity = 0
-            if details.bottom then
-                if player.airborne then
-                    player.state = "landing"
-                end
-
-                player.y = (details.bottom.y + details.bottom.dy)
-                player.airborne = false
-                player.powerjump = false
-                player.free_powerjump = false
-                player.walling = false
-
-            else -- top
-                player.y = (details.top.y - player.dy - 1)
-            end
-        end
-
-        -- corner case : when running on the edge of a block towards the block, we can stay in levitation while running
         if details.bottom then
-            if details.left == details.bottom or details.right == details.bottom then
-                -- on the edge, allow to step on block
-                player.y = player.y + 1
+            player.y_velocity = 0
+            if player.airborne then
+                player.state = "landing"
             end
+
+            player.y = (details.bottom.y + details.bottom.dy)
+            player.airborne = false
+            player.powerjump = false
+            player.free_powerjump = false
+            player.walling = false
         end
+        if details.top then
+            player.y_velocity = 0
+            player.y = (details.top.y - player.dy - 1)
+        end
+
+
 
 
     elseif not player.airborne then
