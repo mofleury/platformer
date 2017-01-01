@@ -17,8 +17,8 @@ local function loadTileSet(rawTilesets, root)
 
         local gid = ts.firstgid
 
-        for h = 0, ts.imageheight / ts.tileheight, 1 do
-            for w = 0, ts.imagewidth / ts.tilewidth, 1 do
+        for h = 0, ts.imageheight / ts.tileheight-1, 1 do
+            for w = 0, ts.imagewidth / ts.tilewidth-1, 1 do
 
                 tileset[gid] = {
                     quad = quadAt(ts.margin + w * (ts.tilewidth + ts.spacing),

@@ -120,8 +120,6 @@ function love.draw()
     love.graphics.scale(0.5, 0.5)
 
 
-    map.draw()
-
     for i, o in ipairs(obstacles) do
         drawBox(o)
     end
@@ -129,6 +127,8 @@ function love.draw()
     for i, a in ipairs(animators) do
         a.draw()
     end
+
+    map.draw()
 
     deepPrint(debug_data)
     debug_data = {}
