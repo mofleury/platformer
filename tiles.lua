@@ -88,8 +88,8 @@ function tiles.tilemap(tilemap, root, screen)
 
     function map.draw()
         for n, l in pairs(layers) do
-            for w, slice in ipairs(l) do
-                for h, gid in ipairs(slice) do
+            for w, slice in pairs(l) do
+                for h, gid in pairs(slice) do
                     drawTile(screen, tileset, gid, (w - 1) * tilewidth, (h - 1) * tileheight)
                 end
             end
