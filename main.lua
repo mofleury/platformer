@@ -20,7 +20,6 @@ function create_player(x, y, keys)
     local animator = animation.animator(zero_spritesheet, player, screen)
     table.insert(animators, animator)
 
-    map = tiles.tilemap("resources/levels/sandbox/sandbox", "resources/levels/sandbox", screen)
 
     player.x = x
     player.y = y
@@ -50,27 +49,33 @@ function love.load()
     screen.dx = love.graphics.getWidth() / 2
     screen.dy = love.graphics.getHeight() / 2
 
-    table.insert(players, create_player(screen.dx / 2, 200, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
+    map = tiles.tilemap("resources/levels/sandbox/sandbox", "resources/levels/sandbox", screen)
+
+    obstacles = map.obstacles
+
+    table.insert(players, create_player(screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
 
 
-    table.insert(players, create_player(screen.dx / 2 + 50, 200, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
+    table.insert(players, create_player(screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
 
 
-    table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
-    table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
-    table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
-    table.insert(obstacles, { x = 500, y = 20, dx = 50, dy = 20 })
-    table.insert(obstacles, { x = 600, y = 50, dx = 50, dy = 20 })
-    table.insert(obstacles, { x = 100, y = 120, dx = 200, dy = 20 })
-    table.insert(obstacles, { x = 200, y = 140, dx = 200, dy = 20 })
-    table.insert(obstacles, { x = 550, y = 200, dx = 200, dy = 20 })
+--    table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
+--    table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
+--    table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
+--    table.insert(obstacles, { x = 500, y = 20, dx = 50, dy = 20 })
+--    table.insert(obstacles, { x = 600, y = 50, dx = 50, dy = 20 })
+--    table.insert(obstacles, { x = 100, y = 120, dx = 200, dy = 20 })
+--    table.insert(obstacles, { x = 200, y = 140, dx = 200, dy = 20 })
+--    table.insert(obstacles, { x = 550, y = 200, dx = 200, dy = 20 })
+--
+--    table.insert(obstacles, { x = 400, y = 100, dx = 20, dy = 20 })
+--    table.insert(obstacles, { x = 200, y = 100, dx = 20, dy = 600 })
+--
+--    table.insert(obstacles, { x = 0, y = 0, dx = 10, dy = screen.dy })
+--    table.insert(obstacles, { x = screen.dx - 10, y = 0, dx = 10, dy = screen.dy })
+--    table.insert(obstacles, { x = 0, y = 0, dx = screen.dx, dy = 20 })
 
-    table.insert(obstacles, { x = 400, y = 100, dx = 20, dy = 20 })
-    table.insert(obstacles, { x = 200, y = 100, dx = 20, dy = 600 })
 
-    table.insert(obstacles, { x = 0, y = 0, dx = 10, dy = screen.dy })
-    table.insert(obstacles, { x = screen.dx - 10, y = 0, dx = 10, dy = screen.dy })
-    table.insert(obstacles, { x = 0, y = 0, dx = screen.dx, dy = 20 })
 end
 
 
@@ -120,9 +125,7 @@ function love.draw()
 
     map.draw()
 
-    for i, o in ipairs(obstacles) do
-        drawBox(o)
-    end
+--  a a
 
     for i, a in ipairs(animators) do
         a.draw()

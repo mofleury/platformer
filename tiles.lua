@@ -17,8 +17,8 @@ local function loadTileSet(rawTilesets, root)
 
         local gid = ts.firstgid
 
-        for h = 0, ts.imageheight / ts.tileheight-1, 1 do
-            for w = 0, ts.imagewidth / ts.tilewidth-1, 1 do
+        for h = 0, ts.imageheight / ts.tileheight - 1, 1 do
+            for w = 0, ts.imagewidth / ts.tilewidth - 1, 1 do
 
                 tileset[gid] = {
                     quad = quadAt(ts.margin + w * (ts.tilewidth + ts.spacing),
@@ -83,6 +83,14 @@ function tiles.tilemap(tilemap, root, screen)
     local layers = {}
     for i, l in ipairs(raw.layers) do
         layers[l.name] = loadLayer(l)
+    end
+
+    map.obstacles = {}
+
+    for w, slice in pairs(layers.solid) do
+        for h, gid in pairs(slice) do
+            table.insert(map.obstacles, { x = (w-1) * tilewidth, y = (h-2) * tileheight, dx = tilewidth, dy = tileheight })
+        end
     end
 
 
