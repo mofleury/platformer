@@ -7,6 +7,16 @@ local buttons_actionable = {}
 
 local action_buttons = {}
 
+local function alignedVertically(details)
+    if (details.bottom ~= nil) then
+        return ((details.left ~= nil and details.left.x + details.left.dx == details.bottom.x + details.bottom.dx)
+                or (details.right ~= nil and details.right.x == details.bottom.x))
+    elseif details.top ~= nil then
+        return ((details.left ~= nil and details.left.x + details.left.dx == details.top.x + details.top.dx)
+                or (details.right ~= nil and details.right.x == details.top.x))
+    end
+end
+
 local function update_buttons(keyboard)
 
     for i, b in ipairs(action_buttons) do
@@ -205,7 +215,7 @@ function control.player(player, obstacles, keys)
             end
         end
 
---        debug_data[player] = { colliding = colliding, details = details }
+        --        debug_data[player] = { colliding = colliding, details = details }
 
         if (colliding) then
 
@@ -244,7 +254,10 @@ function control.player(player, obstacles, keys)
                     end
                 end
             end
-            if details.bottom then
+            if details.bottom and not alignedVertically(details) then
+
+
+
                 y_velocity = 0
                 if airborne then
                     player.state = "landing"
@@ -256,7 +269,7 @@ function control.player(player, obstacles, keys)
                 free_powerjump = false
                 walling = false
             end
-            if details.top then
+            if details.top and not alignedVertically(details) then
                 y_velocity = 0
                 player.y = (details.top.y - player.dy - 1)
             end

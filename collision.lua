@@ -7,6 +7,11 @@ function collision.overlap(o1, o2)
             o1.dy + o1.y > o2.y)
 end
 
+local function pointInRectangle(p, rect)
+    return p[1] > rect.x and p[1] < rect.x + rect.dx and
+            p[2] > rect.y and p[2] < rect.y + rect.dy
+end
+
 function collision.collide(o1, o2)
 
     local w = 0.5 * (o1.dx + o2.dx);
@@ -40,32 +45,32 @@ function collision.collide(o1, o2)
             end
         end
 
---        if (math.abs(math.abs(wy) - math.abs(hx)) <= 200) then
---            -- edge case : we are on a corner, we should say that both egdes collide
---            if (wy > 0 and hx > 0) then
---                details.bottom = true
---                details.left = true
---            elseif (wy > 0 and hx < 0) then
---                details.bottom = true
---                details.right = true
---            elseif (wy < 0 and hx > 0) then
---                details.top = true
---                details.left = true
---            elseif (wy < 0 and hx < 0) then
---                details.top = true
---                details.right = true
---            end
---
---            -- if on a top corner, consider only a collition with bottom
---            if details.bottom then
---                if details.left then
---                    details.left = nii
---                end
---                if details.right then
---                    details.right = nil
---                end
---            end
---        end
+        --        if (math.abs(math.abs(wy) - math.abs(hx)) <= 200) then
+        --            -- edge case : we are on a corner, we should say that both egdes collide
+        --            if (wy > 0 and hx > 0) then
+        --                details.bottom = true
+        --                details.left = true
+        --            elseif (wy > 0 and hx < 0) then
+        --                details.bottom = true
+        --                details.right = true
+        --            elseif (wy < 0 and hx > 0) then
+        --                details.top = true
+        --                details.left = true
+        --            elseif (wy < 0 and hx < 0) then
+        --                details.top = true
+        --                details.right = true
+        --            end
+        --
+        --            -- if on a top corner, consider only a collition with bottom
+        --            if details.bottom then
+        --                if details.left then
+        --                    details.left = nii
+        --                end
+        --                if details.right then
+        --                    details.right = nil
+        --                end
+        --            end
+        --        end
 
 
 
@@ -76,10 +81,7 @@ function collision.collide(o1, o2)
 end
 
 --
---local function pointInRectangle(p, rect)
---    return p[1] > rect.x and p[1] < rect.x + rect.dx and
---            p[2] > rect.y and p[2] < rect.y + rect.dy
---end
+
 --
 --
 --

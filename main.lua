@@ -121,7 +121,11 @@ end
 
 function love.draw()
 
-    love.graphics.scale(2, 2)
+    love.graphics.translate(0, 500)
+    love.graphics.scale(0.5, 0.5)
+
+
+--    love.graphics.scale(2, 2)
 
     map.draw()
 
