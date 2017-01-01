@@ -1,7 +1,6 @@
 local animation = require "animation"
 local control = require "control"
-
-
+local tiles = require "tiles"
 
 local obstacles = {}
 local animators = {}
@@ -9,6 +8,8 @@ local controllers = {}
 local players = {}
 
 local screen = {}
+
+local map = nil
 
 debug_data = {}
 
@@ -18,6 +19,8 @@ function create_player(x, y, keys)
     local zero_spritesheet = dofile("zero_sprites.lua")
     local animator = animation.animator(zero_spritesheet, player, screen)
     table.insert(animators, animator)
+
+    map = tiles.tilemap("resources/levels/sandbox/sandbox", "resources/levels/sandbox", screen)
 
     player.x = x
     player.y = y
@@ -113,7 +116,11 @@ end
 
 function love.draw()
 
-    love.graphics.scale(2, 2)
+    love.graphics.translate(400, 800)
+    love.graphics.scale(0.5, 0.5)
+
+
+    map.draw()
 
     for i, o in ipairs(obstacles) do
         drawBox(o)
