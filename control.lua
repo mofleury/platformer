@@ -191,6 +191,8 @@ function control.player(player, obstacles, keys)
             end
         end
 
+        debug_data.colliding = {}
+
         local colliding, details = false, {}
         for i, o in ipairs(obstacles) do
             local c, d = collision.collide(player, o)
@@ -198,11 +200,12 @@ function control.player(player, obstacles, keys)
                 colliding = true
                 for k, e in pairs(d) do
                     details[k] = o
+                    table.insert(debug_data.colliding, o)
                 end
             end
         end
 
-        controller.debug_data[player] = { colliding = colliding, details = details }
+--        debug_data[player] = { colliding = colliding, details = details }
 
         if (colliding) then
 

@@ -56,7 +56,7 @@ function love.load()
     table.insert(players, create_player(screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
 
 
-    table.insert(players, create_player(screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
+--    table.insert(players, create_player(screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
 
 
 --    table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
@@ -125,12 +125,14 @@ function love.draw()
 
     map.draw()
 
---  a a
 
     for i, a in ipairs(animators) do
         a.draw()
     end
 
+    for i, a in pairs(debug_data.colliding) do
+        drawBox(a)
+    end
 
     deepPrint(debug_data)
     debug_data = {}
