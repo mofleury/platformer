@@ -1,12 +1,14 @@
 local tiles = {}
 
 
-local function loadTileSet(rawTilesets, root)
+local function loadTileSet(rawTilesets, root, mapWidth, mapHeight)
     local tileset = {}
 
     for i, ts in ipairs(rawTilesets) do
 
         local tilesetImage = love.graphics.newImage(root .. "/" .. ts.image)
+
+        local spriteBatch = love.graphics.newSpriteBatch(tilesetImage, mapWidth * mapHeight)
 
         local image_w = tilesetImage:getWidth() --or SourceImage.getWidth(SourceImage)
         local image_h = tilesetImage:getHeight()
@@ -24,7 +26,8 @@ local function loadTileSet(rawTilesets, root)
                     quad = quadAt(ts.margin + w * (ts.tilewidth + ts.spacing),
                         ts.margin + h * (ts.tileheight + ts.spacing),
                         ts.tilewidth, ts.tileheight),
-                    image = tilesetImage
+                    image = tilesetImage,
+                    spriteBatch = spriteBatch
                 }
 
                 gid = gid + 1
@@ -55,20 +58,6 @@ local function loadLayer(rawLayer)
     return layer
 end
 
-local function drawTile(screen, tileset, gid, x, y)
-
-    local tile = tileset[gid]
-
-    love.graphics.draw(tile.image,
-        tile.quad,
-        x,
-        screen.dy - y,
-        0,
-        1,
-        1)
-end
-
-
 
 function tiles.tilemap(tilemap, root, screen)
 
@@ -78,29 +67,48 @@ function tiles.tilemap(tilemap, root, screen)
 
     local tilewidth = raw.tilewidth
     local tileheight = raw.tileheight
-
-    local tileset = loadTileSet(raw.tilesets, root)
+    local spriteBatches = {}
     local layers = {}
+
+    local tileset = loadTileSet(raw.tilesets, root, raw.width, raw.height)
+
     for i, l in ipairs(raw.layers) do
         layers[l.name] = loadLayer(l)
     end
 
-    map.obstacles = {}
 
+    map.obstacles = {}
     for w, slice in pairs(layers.solid) do
         for h, gid in pairs(slice) do
-            table.insert(map.obstacles, { x = (w-1) * tilewidth, y = (h-2) * tileheight, dx = tilewidth, dy = tileheight })
+            table.insert(map.obstacles, { x = (w - 1) * tilewidth, y = (h - 2) * tileheight, dx = tilewidth, dy = tileheight })
         end
     end
 
 
-    function map.draw()
+    local function updateSpriteBatches()
+        for sb, u in pairs(spriteBatches) do
+            sb:clear()
+        end
+
         for n, l in pairs(layers) do
             for w, slice in pairs(l) do
                 for h, gid in pairs(slice) do
-                    drawTile(screen, tileset, gid, (w - 1) * tilewidth, (h - 1) * tileheight)
+
+                    local sb = tileset[gid].spriteBatch
+
+                    sb:add(tileset[gid].quad, (w - 1) * tilewidth, screen.dy - (h - 1) * tileheight)
+
+                    spriteBatches[sb] = 1
                 end
             end
+        end
+    end
+
+    updateSpriteBatches()
+
+    function map.draw()
+        for sb, u in pairs(spriteBatches) do
+            love.graphics.draw(sb, 0, 0)
         end
     end
 

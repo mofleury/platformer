@@ -96,7 +96,7 @@ end
 
 
 local function drawBox(b)
-    love.graphics.setColor(200, 200, 200)
+--    love.graphics.setColor(200, 200, 200)
     love.graphics.rectangle('fill', b.x, screen.dy - b.y - b.dy, b.dx, b.dy)
 end
 
@@ -121,11 +121,11 @@ end
 
 function love.draw()
 
-    love.graphics.translate(0, 500)
-    love.graphics.scale(0.5, 0.5)
+--    love.graphics.translate(0, 500)
+--    love.graphics.scale(0.5, 0.5)
 
 
---    love.graphics.scale(2, 2)
+    love.graphics.scale(2, 2)
 
     map.draw()
 
@@ -140,4 +140,6 @@ function love.draw()
 
     deepPrint(debug_data)
     debug_data = {}
+
+    love.graphics.print("FPS : " .. love.timer.getFPS(), 100, 20)
 end
