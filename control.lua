@@ -39,7 +39,7 @@ local function was_pressed(button)
     return false
 end
 
-function control.player(player, obstacles, keys)
+function control.player(player, map, keys)
 
     table.insert(action_buttons, keys.jump)
     table.insert(action_buttons, keys.dash)
@@ -203,6 +203,8 @@ function control.player(player, obstacles, keys)
 
         debug_data.colliding = {}
 
+        local obstacles = map.obstaclesAround(player, 3)
+
         local colliding, details = false, {}
         for i, o in ipairs(obstacles) do
             local c, d = collision.collide(player, o)
@@ -210,7 +212,7 @@ function control.player(player, obstacles, keys)
                 colliding = true
                 for k, e in pairs(d) do
                     details[k] = o
-                    table.insert(debug_data.colliding, o)
+                    --                    table.insert(debug_data.colliding, o)
                 end
             end
         end

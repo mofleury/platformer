@@ -13,7 +13,7 @@ local map = nil
 
 debug_data = {}
 
-function create_player(x, y, keys)
+local function create_player(map, x, y, keys)
     local player = {}
 
     local zero_spritesheet = dofile("zero_sprites.lua")
@@ -30,7 +30,7 @@ function create_player(x, y, keys)
     player.orientation = 1
     player.state = "idle"
 
-    table.insert(controllers, control.player(player, obstacles, keys))
+    table.insert(controllers, control.player(player, map, keys))
 
     return player
 end
@@ -51,31 +51,28 @@ function love.load()
 
     map = tiles.tilemap("resources/levels/sandbox/sandbox", "resources/levels/sandbox", screen)
 
-    obstacles = map.obstacles
 
-    table.insert(players, create_player(screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
-
-
---    table.insert(players, create_player(screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
+    table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
 
 
---    table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
---    table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
---    table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
---    table.insert(obstacles, { x = 500, y = 20, dx = 50, dy = 20 })
---    table.insert(obstacles, { x = 600, y = 50, dx = 50, dy = 20 })
---    table.insert(obstacles, { x = 100, y = 120, dx = 200, dy = 20 })
---    table.insert(obstacles, { x = 200, y = 140, dx = 200, dy = 20 })
---    table.insert(obstacles, { x = 550, y = 200, dx = 200, dy = 20 })
---
---    table.insert(obstacles, { x = 400, y = 100, dx = 20, dy = 20 })
---    table.insert(obstacles, { x = 200, y = 100, dx = 20, dy = 600 })
---
---    table.insert(obstacles, { x = 0, y = 0, dx = 10, dy = screen.dy })
---    table.insert(obstacles, { x = screen.dx - 10, y = 0, dx = 10, dy = screen.dy })
---    table.insert(obstacles, { x = 0, y = 0, dx = screen.dx, dy = 20 })
+    --    table.insert(players, create_player(map, screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
 
 
+    --    table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
+    --    table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
+    --    table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
+    --    table.insert(obstacles, { x = 500, y = 20, dx = 50, dy = 20 })
+    --    table.insert(obstacles, { x = 600, y = 50, dx = 50, dy = 20 })
+    --    table.insert(obstacles, { x = 100, y = 120, dx = 200, dy = 20 })
+    --    table.insert(obstacles, { x = 200, y = 140, dx = 200, dy = 20 })
+    --    table.insert(obstacles, { x = 550, y = 200, dx = 200, dy = 20 })
+    --
+    --    table.insert(obstacles, { x = 400, y = 100, dx = 20, dy = 20 })
+    --    table.insert(obstacles, { x = 200, y = 100, dx = 20, dy = 600 })
+    --
+    --    table.insert(obstacles, { x = 0, y = 0, dx = 10, dy = screen.dy })
+    --    table.insert(obstacles, { x = screen.dx - 10, y = 0, dx = 10, dy = screen.dy })
+    --    table.insert(obstacles, { x = 0, y = 0, dx = screen.dx, dy = 20 })
 end
 
 
@@ -96,7 +93,7 @@ end
 
 
 local function drawBox(b)
---    love.graphics.setColor(200, 200, 200)
+    --    love.graphics.setColor(200, 200, 200)
     love.graphics.rectangle('fill', b.x, screen.dy - b.y - b.dy, b.dx, b.dy)
 end
 
@@ -121,8 +118,8 @@ end
 
 function love.draw()
 
---    love.graphics.translate(0, 500)
---    love.graphics.scale(0.5, 0.5)
+    --    love.graphics.translate(0, 500)
+    --    love.graphics.scale(0.5, 0.5)
 
 
     love.graphics.scale(2, 2)
