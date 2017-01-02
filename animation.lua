@@ -33,12 +33,11 @@ function animation.animator(spritesheet, object, screen)
         love.graphics.draw(spritesheet.image, --The image
             --Current frame of the current animation
             spritesheet.animations[object.state][index + 1].q,
-            xDraw,
-            screen.dy - yDraw,
+            xDraw - screen.x,
+            screen.y + screen.dy - yDraw,
             0,
             xScale,
             1)
-
     end
 
     function animator.update(dt)

@@ -46,6 +46,8 @@ function love.load()
 
     love.window.setMode(1600, 1200, { highdpi = true })
 
+    screen.x = 0
+    screen.y = 0
     screen.dx = love.graphics.getWidth() / 2
     screen.dy = love.graphics.getHeight() / 2
 
@@ -80,6 +82,7 @@ end
 function love.update(dt)
 
     debug_data.players = players
+    debug_data.screen = screen
     --    debug_data.controllers = controllers
 
     for i, c in ipairs(controllers) do
@@ -89,6 +92,10 @@ function love.update(dt)
     for i, a in ipairs(animators) do
         a.update(dt)
     end
+
+    screen.x = players[1].x - screen.dx/2
+    screen.y = players[1].y - screen.dy/2
+
 end
 
 

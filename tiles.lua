@@ -117,7 +117,7 @@ function tiles.tilemap(tilemap, root, screen)
 
                     local sb = tileset[gid].spriteBatch
 
-                    sb:add(tileset[gid].quad, (w - 1) * tilewidth, screen.dy - (h - 1) * tileheight)
+                    sb:add(tileset[gid].quad, (w - 1) * tilewidth, screen.y + screen.dy - (h - 1) * tileheight)
 
                     spriteBatches[sb] = 1
                 end
@@ -129,7 +129,7 @@ function tiles.tilemap(tilemap, root, screen)
 
     function map.draw()
         for sb, u in pairs(spriteBatches) do
-            love.graphics.draw(sb, 0, 0)
+            love.graphics.draw(sb, - screen.x, screen.y)
         end
     end
 
