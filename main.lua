@@ -11,6 +11,8 @@ local screen = {}
 
 local map = nil
 
+local side_margin = 200
+
 debug_data = {}
 
 local function create_player(map, x, y, keys)
@@ -93,15 +95,28 @@ function love.update(dt)
         a.update(dt)
     end
 
-    screen.x = players[1].x - screen.dx/2
-    screen.y = players[1].y - screen.dy/2
+    local p = players[1]
 
+    if p.x - screen.x < side_margin then
+        screen.x = p.x - side_margin
+    elseif p.x + p.dx > screen.x + screen.dx - side_margin then
+        screen.x = p.x + p.dx + side_margin - screen.dx
+    end
+
+    if p.y - screen.y < side_margin then
+        screen.y = p.y - side_margin
+    elseif p.y + p.dy > screen.y + screen.dy - side_margin then
+        screen.y = p.y + p.dy + side_margin - screen.dy
+    end
+
+    --    screen.x = players[1].x - screen.dx/2
+    --    screen.y = players[1].y - screen.dy / 2
 end
 
 
 local function drawBox(b)
     --    love.graphics.setColor(200, 200, 200)
-    love.graphics.rectangle('fill', b.x, screen.dy - b.y - b.dy, b.dx, b.dy)
+    love.graphics.rectangle('line', b.x - screen.x, screen.dy - (b.y + b.dy - screen.y), b.dx, b.dy)
 end
 
 local function deepPrint(t)
@@ -130,6 +145,8 @@ function love.draw()
 
 
     love.graphics.scale(2, 2)
+
+    drawBox({ x = screen.x + side_margin, y = screen.y + side_margin, dx = screen.dx - 2 * side_margin, dy = screen.dy - 2 * side_margin })
 
     map.draw()
 
