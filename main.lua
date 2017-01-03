@@ -53,7 +53,7 @@ function love.load()
     screen.dx = love.graphics.getWidth() / 2
     screen.dy = love.graphics.getHeight() / 2
 
-    map = tiles.tilemap("resources/levels/sandbox/sandbox", "resources/levels/sandbox", screen)
+    map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)
 
 
     table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
