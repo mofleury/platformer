@@ -13,6 +13,8 @@ local map = nil
 
 local side_margin = 200
 
+local camera_window
+
 debug_data = {}
 
 local function create_player(map, x, y, keys)
@@ -37,6 +39,24 @@ local function create_player(map, x, y, keys)
     return player
 end
 
+local FPSCAP = 60 -- change if you want higher/lower max fps
+
+local lastframe
+
+local function sleepIfPossible(dt)
+
+    if lastframe then
+
+        local slack = 1 / FPSCAP - (love.timer.getTime() - lastframe)
+        if slack > 0 then
+            love.timer.sleep(slack)
+        end
+        local now = love.timer.getTime()
+        local diff = now - lastframe
+    end
+    lastframe = love.timer.getTime()
+end
+
 
 function love.load()
     if arg[#arg] == "-debug" then require("mobdebug").start()
@@ -52,6 +72,10 @@ function love.load()
     screen.y = 0
     screen.dx = love.graphics.getWidth() / 2
     screen.dy = love.graphics.getHeight() / 2
+
+    local camera_window_width = 100
+    camera_window = { x = screen.dx / 2 - camera_window_width / 2, y = screen.dy / 2 - 100, dx = camera_window_width, dy = 200 }
+
 
     map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)
 
@@ -97,20 +121,23 @@ function love.update(dt)
 
     local p = players[1]
 
-    if p.x - screen.x < side_margin then
-        screen.x = p.x - side_margin
-    elseif p.x + p.dx > screen.x + screen.dx - side_margin then
-        screen.x = p.x + p.dx + side_margin - screen.dx
+    if p.x < screen.x + camera_window.x then
+        screen.x = p.x - camera_window.x
+    elseif p.x + p.dx > screen.x + camera_window.x + camera_window.dx then
+        screen.x = p.x + p.dx - (camera_window.x + camera_window.dx)
     end
 
-    if p.y - screen.y < side_margin then
-        screen.y = p.y - side_margin
-    elseif p.y + p.dy > screen.y + screen.dy - side_margin then
-        screen.y = p.y + p.dy + side_margin - screen.dy
+
+    if p.y < screen.y + camera_window.y then
+        screen.y = p.y - camera_window.y
+    elseif p.y + p.dy > screen.y + camera_window.y + camera_window.dy then
+        screen.y = p.y + p.dy - (camera_window.y + camera_window.dy)
     end
 
     --    screen.x = players[1].x - screen.dx/2
     --    screen.y = players[1].y - screen.dy / 2
+
+    sleepIfPossible(dt)
 end
 
 
@@ -146,7 +173,7 @@ function love.draw()
 
     love.graphics.scale(2, 2)
 
-    drawBox({ x = screen.x + side_margin, y = screen.y + side_margin, dx = screen.dx - 2 * side_margin, dy = screen.dy - 2 * side_margin })
+    --    drawBox({ x = screen.x + camera_window.x, y = screen.y + camera_window.y, dx = camera_window.dx, dy = camera_window.dy })
 
     map.draw()
 
@@ -162,5 +189,5 @@ function love.draw()
     deepPrint(debug_data)
     debug_data = {}
 
-    love.graphics.print("FPS : " .. love.timer.getFPS(), 100, 20)
+    love.graphics.print("FPS : " .. love.timer.getFPS(), screen.dx - 100, 20)
 end
