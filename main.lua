@@ -139,7 +139,7 @@ function love.draw()
 
     love.graphics.scale(2, 2)
 
-    drawBox(camera.windowBox())
+    --    drawBox(camera.windowBox())
 
     map.draw()
 
