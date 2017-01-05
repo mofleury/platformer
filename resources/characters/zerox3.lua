@@ -1,5 +1,5 @@
 do
-    local sourceImage = love.graphics.newImage("resources/zerox3.png")
+    local sourceImage = love.graphics.newImage("resources/characters/zerox3.png")
 
     local image_w = sourceImage:getWidth() --or SourceImage.getWidth(SourceImage)
     local image_h = sourceImage:getHeight()

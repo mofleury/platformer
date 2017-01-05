@@ -18,7 +18,7 @@ debug_data = {}
 local function create_player(map, x, y, keys)
     local player = {}
 
-    local zero_spritesheet = dofile("zero_sprites.lua")
+    local zero_spritesheet = dofile("resources/characters/zerox3.lua")
     local animator = animation.animator(zero_spritesheet, player, screen)
     table.insert(animators, animator)
 

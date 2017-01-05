@@ -22,7 +22,7 @@ function love.load()
     screen.dx = love.graphics.getWidth() / 2
     screen.dy = love.graphics.getHeight() / 2
 
-    zero_spritesheet = dofile("zero_sprites.lua")
+    zero_spritesheet = dofile("zerox3.lua")
     zero = animation.animator(zero_spritesheet, player)
 
 
