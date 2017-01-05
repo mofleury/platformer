@@ -6,6 +6,7 @@ local cameras = require "cameras"
 local animators = {}
 local controllers = {}
 local players = {}
+local mobs = {}
 
 local screen = {}
 
@@ -79,6 +80,15 @@ function love.load()
     table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
 
     camera = cameras.windowCamera(camera_window, screen, players[1])
+
+    local mob = { x = 100, y = 100, dx = 22, dy = 26, orientation = 1, state = "idle" }
+
+    local mobAnimator = animation.animator(dofile("resources/characters/blob.lua"), mob, screen)
+    table.insert(animators, mobAnimator)
+
+    local mobController = control.blob(mob, players[1], map)
+    table.insert(controllers, mobController)
+
 
     --    table.insert(players, create_player(map, screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
 end

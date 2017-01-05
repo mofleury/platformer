@@ -7,6 +7,18 @@ local buttons_actionable = {}
 
 local action_buttons = {}
 
+local function sign(x)
+    if x < 0 then
+        return -1
+    elseif x > 0 then
+        return 1
+    else
+        return 0
+    end
+end
+
+
+
 local function alignedVertically(details)
     if (details.bottom ~= nil) then
         return ((details.left ~= nil and details.left.x + details.left.dx == details.bottom.x + details.bottom.dx)
@@ -292,6 +304,20 @@ function control.player(player, map, keys)
         else
             walling = false
         end
+    end
+
+    return controller
+end
+
+function control.blob(blob, player, map)
+
+    local controller = {}
+
+    local speed = 1
+
+    function controller.update(dt)
+
+        blob.x = blob.x + speed * sign(player.x - blob.x)
     end
 
     return controller
