@@ -1,8 +1,8 @@
 local animation = require "animation"
 local control = require "control"
 local tiles = require "tiles"
+local cameras = require "cameras"
 
-local obstacles = {}
 local animators = {}
 local controllers = {}
 local players = {}
@@ -11,9 +11,7 @@ local screen = {}
 
 local map = nil
 
-local side_margin = 200
-
-local camera_window
+local camera
 
 debug_data = {}
 
@@ -74,33 +72,15 @@ function love.load()
     screen.dy = love.graphics.getHeight() / 2
 
     local camera_window_width = 100
-    camera_window = { x = screen.dx / 2 - camera_window_width / 2, y = screen.dy / 2 - 100, dx = camera_window_width, dy = 200 }
-
+    local camera_window = { x = screen.dx / 2 - camera_window_width / 2, y = screen.dy / 2 - 100, dx = camera_window_width, dy = 200 }
 
     map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)
 
-
     table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's' }))
 
+    camera = cameras.windowCamera(camera_window, screen, players[1])
 
     --    table.insert(players, create_player(map, screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
-
-
-    --    table.insert(obstacles, { x = 10, y = 30, dx = 10, dy = 20 })
-    --    table.insert(obstacles, { x = 100, y = 50, dx = 10, dy = 30 })
-    --    table.insert(obstacles, { x = 200, y = 80, dx = 20, dy = 20 })
-    --    table.insert(obstacles, { x = 500, y = 20, dx = 50, dy = 20 })
-    --    table.insert(obstacles, { x = 600, y = 50, dx = 50, dy = 20 })
-    --    table.insert(obstacles, { x = 100, y = 120, dx = 200, dy = 20 })
-    --    table.insert(obstacles, { x = 200, y = 140, dx = 200, dy = 20 })
-    --    table.insert(obstacles, { x = 550, y = 200, dx = 200, dy = 20 })
-    --
-    --    table.insert(obstacles, { x = 400, y = 100, dx = 20, dy = 20 })
-    --    table.insert(obstacles, { x = 200, y = 100, dx = 20, dy = 600 })
-    --
-    --    table.insert(obstacles, { x = 0, y = 0, dx = 10, dy = screen.dy })
-    --    table.insert(obstacles, { x = screen.dx - 10, y = 0, dx = 10, dy = screen.dy })
-    --    table.insert(obstacles, { x = 0, y = 0, dx = screen.dx, dy = 20 })
 end
 
 
@@ -121,21 +101,7 @@ function love.update(dt)
 
     local p = players[1]
 
-    if p.x < screen.x + camera_window.x then
-        screen.x = p.x - camera_window.x
-    elseif p.x + p.dx > screen.x + camera_window.x + camera_window.dx then
-        screen.x = p.x + p.dx - (camera_window.x + camera_window.dx)
-    end
-
-
-    if p.y < screen.y + camera_window.y then
-        screen.y = p.y - camera_window.y
-    elseif p.y + p.dy > screen.y + camera_window.y + camera_window.dy then
-        screen.y = p.y + p.dy - (camera_window.y + camera_window.dy)
-    end
-
-    --    screen.x = players[1].x - screen.dx/2
-    --    screen.y = players[1].y - screen.dy / 2
+    camera.update(dt)
 
     sleepIfPossible(dt)
 end
@@ -173,7 +139,7 @@ function love.draw()
 
     love.graphics.scale(2, 2)
 
-    --    drawBox({ x = screen.x + camera_window.x, y = screen.y + camera_window.y, dx = camera_window.dx, dy = camera_window.dy })
+    drawBox(camera.windowBox())
 
     map.draw()
 
