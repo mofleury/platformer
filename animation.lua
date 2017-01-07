@@ -56,7 +56,7 @@ function animation.animator(spritesheet, object, screen)
         if (object.state ~= previous_state) then
 
             -- if state is the next state of the "current", keep it
-            if previous_state ~= nil and currentAnimation().next == previous_state then
+            if previous_state ~= nil and spritesheet.animations[object.state].next == previous_state then
                 object.state = previous_state
             else
                 index = 0
@@ -66,15 +66,16 @@ function animation.animator(spritesheet, object, screen)
         end
 
         local anim = currentAnimation()
+        local nonAlternateAnim = spritesheet.animations[object.state]
 
         time_elapsed = time_elapsed + dt
         if time_elapsed > anim.frame_duration * animation_slowdown_factor then
             index = (index + 1) % table.getn(anim)
 
             if index == 0 then
-                if anim.next ~= nil then
-                    object.state = anim.next
-                    previous_state = anim.next
+                if nonAlternateAnim.next ~= nil then
+                    object.state = nonAlternateAnim.next
+                    previous_state = nonAlternateAnim.next
                 end
             end
 

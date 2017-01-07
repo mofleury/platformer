@@ -59,17 +59,38 @@ local animations = {
         quadAt(120, 450, 60, 67),
         quadAt(180, 450, 60, 67),
         quadAt(240, 450, 60, 67),
+        alternates = { shooting = "jumping_shooting" }
+    },
+    jumping_shooting = {
+        frame_duration = 0.05,
+        quadAt(0, 519, 60, 67),
+        quadAt(60, 519, 60, 67),
+        quadAt(120, 519, 60, 67),
+        quadAt(180, 519, 60, 67),
+        quadAt(240, 519, 60, 67),
     },
     falling = {
         frame_duration = 0.05,
         quadAt(300, 450, 60, 67),
         quadAt(360, 450, 60, 67),
+        alternates = { shooting = "falling_shooting" }
+    },
+    falling_shooting = {
+        frame_duration = 0.05,
+        quadAt(300, 519, 60, 67),
+        quadAt(360, 519, 60, 67),
     },
     landing = {
         frame_duration = 0.05,
         quadAt(420, 466, 60, 51),
         quadAt(480, 474, 60, 43),
-        next = "idle"
+        next = "idle",
+        alternates = { shooting = "landing_shooting" }
+    },
+    landing_shooting = {
+        frame_duration = 0.05,
+        quadAt(420, 535, 60, 51),
+        quadAt(480, 543, 60, 43),
     },
     dashing = {
         frame_duration = 0.05,
