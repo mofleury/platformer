@@ -11,10 +11,22 @@ function animation.animator(spritesheet, object, screen)
     local previous_state = object.state
     local time_elapsed = 0
 
+    local function currentAnimation()
+
+        if object.subState ~= nil and spritesheet.animations[object.state].alternates ~= nil then
+            local secondaryAnim = spritesheet.animations[object.state].alternates[object.subState]
+            if secondaryAnim ~= nil then
+                return spritesheet.animations[secondaryAnim]
+            end
+        end
+
+        return spritesheet.animations[object.state]
+    end
+
     function animator.draw()
 
 
-        local frame = spritesheet.animations[object.state][index + 1]
+        local frame = currentAnimation()[index + 1]
 
 
         local xCenter = object.x + object.dx / 2
@@ -32,7 +44,7 @@ function animation.animator(spritesheet, object, screen)
 
         love.graphics.draw(spritesheet.image, --The image
             --Current frame of the current animation
-            spritesheet.animations[object.state][index + 1].q,
+            frame.q,
             xDraw - screen.x,
             screen.y + screen.dy - yDraw,
             0,
@@ -44,7 +56,7 @@ function animation.animator(spritesheet, object, screen)
         if (object.state ~= previous_state) then
 
             -- if state is the next state of the "current", keep it
-            if previous_state ~= nil and spritesheet.animations[object.state].next == previous_state then
+            if previous_state ~= nil and currentAnimation().next == previous_state then
                 object.state = previous_state
             else
                 index = 0
@@ -53,7 +65,7 @@ function animation.animator(spritesheet, object, screen)
             end
         end
 
-        local anim = spritesheet.animations[object.state]
+        local anim = currentAnimation()
 
         time_elapsed = time_elapsed + dt
         if time_elapsed > anim.frame_duration * animation_slowdown_factor then

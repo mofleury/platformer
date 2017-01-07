@@ -55,6 +55,7 @@ function control.player(player, map, keys)
 
     table.insert(action_buttons, keys.jump)
     table.insert(action_buttons, keys.dash)
+    table.insert(action_buttons, keys.shoot)
 
     local controller = {}
     controller.debug_data = {}
@@ -83,8 +84,21 @@ function control.player(player, map, keys)
     local dashing = false
     local walling = false
 
+    local shooting_timer = 0
+    local shooting_duration = 0.25
+
     function controller.update(dt)
         update_buttons(love.keyboard)
+
+        if was_pressed(keys.shoot) then
+            player.subState = "shooting"
+            shooting_timer = shooting_duration
+        end
+
+        shooting_timer = shooting_timer - dt
+        if shooting_timer <= 0 then
+            player.subState = nil
+        end
 
         if love.keyboard.isDown(keys.right) or love.keyboard.isDown(keys.left) then
             free_powerjump = false
