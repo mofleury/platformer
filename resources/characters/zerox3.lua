@@ -94,29 +94,49 @@ local animations = {
     },
     dashing = {
         frame_duration = 0.05,
-        --           quadAt(0, 67, 59, 51),
-        quadAt(61, 125, 48, 51),
-        quadAt(111, 125, 58, 51),
-        quadAt(170, 125, 68, 51),
-        quadAt(239, 125, 68, 51),
-        quadAt(311, 125, 78, 51),
-        quadAt(407, 125, 78, 51),
+        quadAt(61, 122, 55, 54),
+        quadAt(116, 122, 59, 54),
+        quadAt(176, 122, 73, 54),
+        quadAt(258, 122, 73, 54),
+        quadAt(338, 122, 86, 54),
+        quadAt(425, 122, 86, 54),
+        alternates = { shooting = "dashing_shooting" }
+    },
+    dashing_shooting = {
+        frame_duration = 0.05,
+        quadAt(61, 176, 55, 54),
+        quadAt(116, 176, 59, 54),
+        quadAt(176, 176, 73, 54),
+        quadAt(258, 176, 73, 54),
+        quadAt(338, 176, 86, 54),
+        quadAt(425, 176, 86, 54),
     },
     wall_landing = {
         frame_duration = 0.05,
-        quadAt(323, 532, 39, 50),
-        quadAt(378, 532, 34, 50),
+        quadAt(323, 598, 39, 49),
+        quadAt(378, 598, 34, 49),
         next = "wall_sliding"
     },
     wall_sliding = {
         frame_duration = 0.05,
-        quadAt(423, 532, 39, 50)
+        quadAt(418, 598, 43, 49),
+        alternates = { shooting = "wall_sliding_shooting" }
+    },
+    wall_sliding_shooting = {
+        frame_duration = 0.05,
+        quadAt(466, 598, 43, 49)
     },
     wall_jumping = {
         frame_duration = 0.05,
-        quadAt(520, 525, 44, 52),
-        quadAt(562, 525, 44, 52),
-        next = "jumping"
+        quadAt(520, 596, 43, 51),
+        quadAt(562, 596, 43, 51),
+        next = "jumping",
+        alternates = { shooting = "wall_jumping_shooting" }
+    },
+    wall_jumping_shooting = {
+        frame_duration = 0.05,
+        quadAt(520, 596, 43, 51),
+        quadAt(606, 596, 45, 51),
     }
 }
 
