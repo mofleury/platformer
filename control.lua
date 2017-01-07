@@ -263,6 +263,12 @@ function control.player(player, map, keys)
                     player.x = (details.left.x + details.left.dx + 1)
                     if airborne and love.keyboard.isDown(keys.left) then
                         player.state = "wall_landing"
+
+                        -- if just landing on the wall, dont move up or down
+                        if not walling and wall_jump_timer < 0 then
+                            y_velocity = 0
+                        end
+
                         walling = true
                         if not love.keyboard.isDown(keys.dash) then
                             powerjump = false
