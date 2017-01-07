@@ -113,8 +113,9 @@ local animations = {
     },
     wall_landing = {
         frame_duration = 0.05,
-        quadAt(323, 598, 39, 49),
-        quadAt(378, 598, 34, 49),
+        quadAt(328, 598, 61, 51),
+        quadAt(328, 654, 61, 51),
+        quadAt(328, 716, 61, 51),
         next = "wall_sliding"
     },
     wall_sliding = {
