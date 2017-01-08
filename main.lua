@@ -113,7 +113,7 @@ local function newBullet(playerShotEvent)
 
     local bullet = { x = xb, y = source.y + frame.ay - 5, dx = 10, dy = 10, orientation = playerShotEvent.orientation, state = "idle" }
 
-    local c = control.bullet(bullet, map)
+    local c = control.bullet(bullet, map, screen)
 
     controllers[bullet] = c
 
@@ -122,11 +122,19 @@ local function newBullet(playerShotEvent)
     animators[bullet] = a
 end
 
+local function bulletLost(bulletLostEvent)
+    local bullet = bulletLostEvent.from
+
+    controllers[bullet] = nil
+    animators[bullet] = nil
+end
+
 function love.update(dt)
 
-    debug_data.players = players
-    debug_data.screen = screen
+    --    debug_data.players = players
+    --    debug_data.screen = screen
     --    debug_data.controllers = controllers
+    --    debug_data.animators = animators
 
 
     local allEvents = {}
@@ -145,6 +153,9 @@ function love.update(dt)
     for i, events in ipairs(allEvents) do
         if events.playerShot then
             newBullet(events.playerShot)
+        end
+        if events.bulletLost then
+            bulletLost(events.bulletLost)
         end
     end
 

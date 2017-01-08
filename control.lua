@@ -355,14 +355,24 @@ function control.blob(blob, player, map)
     return controller
 end
 
-function control.bullet(bullet, map)
+function control.bullet(bullet, map, screen)
 
     local controller = {}
 
     local speed = 10
+    local margin = 100
 
     function controller.update(dt)
+
+        local events = {}
+
         bullet.x = bullet.x + speed * bullet.orientation
+
+        if (bullet.x < screen.x - margin) or (bullet.x > screen.x + screen.dx + margin) then
+            events.bulletLost = { from = bullet }
+        end
+
+        return events
     end
 
     return controller
