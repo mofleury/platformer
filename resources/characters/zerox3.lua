@@ -4,8 +4,16 @@ local image_w = sourceImage:getWidth() --or SourceImage.getWidth(SourceImage)
 local image_h = sourceImage:getHeight()
 
 
-local function quadAt(x, y, dx, dy)
-    return { q = love.graphics.newQuad(x, y, dx, dy, image_w, image_h), dx = dx, dy = dy, x = x, y = y }
+local function quadAt(x, y, dx, dy, ax, ay)
+
+    if ax == nil then
+        ax = dx/2
+    end
+    if ay == nil then
+        ay = dy/2
+    end
+
+    return { q = love.graphics.newQuad(x, y, dx, dy, image_w, image_h), dx = dx, dy = dy, x = x, y = y, ax = ax, ay = ay }
 end
 
 

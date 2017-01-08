@@ -14,6 +14,8 @@ local map = nil
 
 local camera
 
+local bulletSpriteSheet
+
 debug_data = {}
 
 local function create_player(map, x, y, keys)
@@ -21,7 +23,7 @@ local function create_player(map, x, y, keys)
 
     local zero_spritesheet = dofile("resources/characters/zerox3.lua")
     local animator = animation.animator(zero_spritesheet, player, screen)
-    table.insert(animators, animator)
+    animators[player] = animator
 
 
     player.x = x
@@ -33,7 +35,7 @@ local function create_player(map, x, y, keys)
     player.orientation = 1
     player.state = "idle"
 
-    table.insert(controllers, control.player(player, map, keys))
+    controllers[player] = control.player(player, map, keys)
 
     return player
 end
@@ -84,16 +86,41 @@ function love.load()
     local mob = { x = 100, y = 100, dx = 22, dy = 26, orientation = 1, state = "idle" }
 
     local mobAnimator = animation.animator(dofile("resources/characters/blob.lua"), mob, screen)
-    table.insert(animators, mobAnimator)
+    animators[mob] = mobAnimator
 
     local mobController = control.blob(mob, players[1], map)
-    table.insert(controllers, mobController)
+    controllers[mob] = mobController
 
+
+    bulletSpriteSheet = dofile("resources/characters/bullet.lua")
 
     --    table.insert(players, create_player(map, screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
 end
 
 
+
+local function newBullet(playerShotEvent)
+    local source = playerShotEvent.from
+
+    local frame = animators[source].currentFrame()
+
+    local xb
+    if playerShotEvent.orientation == 1 then
+        xb = source.x + frame.ax + 10
+    else
+        xb = source.x + source.dx - frame.ax - 10
+    end
+
+    local bullet = { x = xb, y = source.y + frame.ay - 5, dx = 10, dy = 10, orientation = playerShotEvent.orientation, state = "idle" }
+
+    local c = control.bullet(bullet, map)
+
+    controllers[bullet] = c
+
+    local a = animation.animator(bulletSpriteSheet, bullet, screen)
+
+    animators[bullet] = a
+end
 
 function love.update(dt)
 
@@ -101,12 +128,24 @@ function love.update(dt)
     debug_data.screen = screen
     --    debug_data.controllers = controllers
 
-    for i, c in ipairs(controllers) do
-        c.update(dt)
+
+    local allEvents = {}
+
+    for i, c in pairs(controllers) do
+        local events = c.update(dt)
+        if events ~= nil then
+            table.insert(allEvents, events)
+        end
     end
 
-    for i, a in ipairs(animators) do
+    for i, a in pairs(animators) do
         a.update(dt)
+    end
+
+    for i, events in ipairs(allEvents) do
+        if events.playerShot then
+            newBullet(events.playerShot)
+        end
     end
 
     local p = players[1]
@@ -154,7 +193,7 @@ function love.draw()
     map.draw()
 
 
-    for i, a in ipairs(animators) do
+    for i, a in pairs(animators) do
         a.draw()
     end
 

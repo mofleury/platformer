@@ -23,6 +23,10 @@ function animation.animator(spritesheet, object, screen)
         return spritesheet.animations[object.state]
     end
 
+    function animator.currentFrame()
+        return currentAnimation()[index + 1]
+    end
+
     function animator.draw()
 
 

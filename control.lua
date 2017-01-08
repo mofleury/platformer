@@ -88,9 +88,19 @@ function control.player(player, map, keys)
     local shooting_duration = 0.25
 
     function controller.update(dt)
+
+        local events = {}
+
         update_buttons(love.keyboard)
 
         if was_pressed(keys.shoot) then
+            local o
+            if walling then
+                o = -player.orientation
+            else
+                o = player.orientation
+            end
+            events.playerShot = { from = player, orientation = o }
             player.subState = "shooting"
             shooting_timer = shooting_duration
         end
@@ -324,6 +334,8 @@ function control.player(player, map, keys)
         else
             walling = false
         end
+
+        return events
     end
 
     return controller
@@ -338,6 +350,19 @@ function control.blob(blob, player, map)
     function controller.update(dt)
 
         blob.x = blob.x + speed * sign(player.x - blob.x)
+    end
+
+    return controller
+end
+
+function control.bullet(bullet, map)
+
+    local controller = {}
+
+    local speed = 10
+
+    function controller.update(dt)
+        bullet.x = bullet.x + speed * bullet.orientation
     end
 
     return controller
