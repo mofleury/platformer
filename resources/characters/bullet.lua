@@ -12,7 +12,7 @@ end
 local animations = {
     idle = {
         frame_duration = 0.1,
-        quadAt(878, 382, 8, 6)
+        quadAt(16, 684, 8, 6)
     }
 }
 

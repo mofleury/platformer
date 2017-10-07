@@ -24,7 +24,7 @@ local animations = {
         quadAt(56, 9, 56, 45),
         quadAt(112, 9, 56, 45),
         quadAt(169, 9, 54, 45),
-        alternates = { shooting = "idle_shooting" }
+        alternates = { shooting = "idle_shooting", slashing = "idle_slashing" }
     },
     idle_shooting = {
         frame_duration = 0.1,
@@ -146,6 +146,22 @@ local animations = {
         frame_duration = 0.05,
         quadAt(520, 596, 43, 51),
         quadAt(606, 596, 45, 51),
+    },
+    slashing = {
+        frame_duration = 0.05,
+        quadAt(37, 234, 110, 68),
+        quadAt(147, 234, 110, 68),
+        quadAt(257, 234, 110, 68),
+        quadAt(367, 234, 110, 68),
+        quadAt(477, 234, 110, 68),
+        quadAt(586, 234, 112, 68),
+        quadAt(698, 234, 108, 68),
+        quadAt(807, 234, 110, 68),
+        quadAt(917, 234, 110, 68),
+        quadAt(1027, 234, 110, 68),
+        quadAt(1137, 234, 110, 68),
+        quadAt(1247, 234, 110, 68),
+        next = idle
     }
 }
 

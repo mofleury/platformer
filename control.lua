@@ -56,6 +56,7 @@ function control.player(player, map, keys)
     table.insert(action_buttons, keys.jump)
     table.insert(action_buttons, keys.dash)
     table.insert(action_buttons, keys.shoot)
+    table.insert(action_buttons, keys.slash)
 
     local controller = {}
     controller.debug_data = {}
@@ -83,6 +84,7 @@ function control.player(player, map, keys)
 
     local dashing = false
     local walling = false
+    local slashing = false
 
     local shooting_timer = 0
     local shooting_duration = 0.25
@@ -106,9 +108,14 @@ function control.player(player, map, keys)
         end
 
         shooting_timer = shooting_timer - dt
-        if shooting_timer <= 0 then
+        if shooting_timer <= 0 and player.subState == "shooting" then
             player.subState = nil
         end
+
+        if was_pressed(keys.slash) then
+            slashing = true
+        end
+
 
         if love.keyboard.isDown(keys.right) or love.keyboard.isDown(keys.left) then
             free_powerjump = false
@@ -179,7 +186,12 @@ function control.player(player, map, keys)
 
             player.x = (player.x + player.orientation * (x_speed * dt))
         elseif not (airborne or player.state == "landing") then
-            player.state = "idle"
+
+            if slashing then
+                player.state = "slashing"
+            else
+                player.state = "idle"
+            end
         end
 
         if dashing then
