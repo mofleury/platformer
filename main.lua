@@ -2,11 +2,13 @@ local animation = require "animation"
 local control = require "control"
 local tiles = require "tiles"
 local cameras = require "cameras"
+local collision = require "collision"
 
 local animators = {}
 local controllers = {}
 local players = {}
 local mobs = {}
+local bullets = {}
 
 local screen = {}
 
@@ -58,6 +60,17 @@ local function sleepIfPossible(dt)
     lastframe = love.timer.getTime()
 end
 
+local function createMob()
+    local mob = { x = 100, y = 100, dx = 22, dy = 26, orientation = 1, state = "idle" }
+    mobs[mob] = true
+
+    local mobAnimator = animation.animator(dofile("resources/characters/blob.lua"), mob, screen)
+    animators[mob] = mobAnimator
+
+    local mobController = control.blob(mob, players[1], map)
+    controllers[mob] = mobController
+end
+
 
 function love.load()
     if arg[#arg] == "-debug" then require("mobdebug").start()
@@ -83,13 +96,7 @@ function love.load()
 
     camera = cameras.windowCamera(camera_window, screen, players[1])
 
-    local mob = { x = 100, y = 100, dx = 22, dy = 26, orientation = 1, state = "idle" }
 
-    local mobAnimator = animation.animator(dofile("resources/characters/blob.lua"), mob, screen)
-    animators[mob] = mobAnimator
-
-    local mobController = control.blob(mob, players[1], map)
-    controllers[mob] = mobController
 
 
     bulletSpriteSheet = dofile("resources/characters/bullet.lua")
@@ -120,13 +127,27 @@ local function newBullet(playerShotEvent)
     local a = animation.animator(bulletSpriteSheet, bullet, screen)
 
     animators[bullet] = a
+
+    bullets[bullet] = true
 end
 
-local function bulletLost(bulletLostEvent)
-    local bullet = bulletLostEvent.from
 
+local function destroyBullet(bullet)
     controllers[bullet] = nil
     animators[bullet] = nil
+    bullets[bullet] = nil
+end
+
+
+
+local function bulletLost(bulletLostEvent)
+    destroyBullet(bulletLostEvent.from)
+end
+
+local function destroyMob(mob)
+    controllers[mob] = nil
+    animators[mob] = nil
+    mobs[mob] = nil
 end
 
 function love.update(dt)
@@ -135,6 +156,10 @@ function love.update(dt)
     --    debug_data.screen = screen
     --    debug_data.controllers = controllers
     --    debug_data.animators = animators
+
+    if(love.keyboard.isDown('f')) then
+        createMob()
+    end
 
 
     local allEvents = {}
@@ -159,7 +184,16 @@ function love.update(dt)
         end
     end
 
-    local p = players[1]
+    debug_data.things = { mobs, bullets }
+
+    for b, i in pairs(bullets) do
+        for m, j in pairs(mobs) do
+            if collision.overlap(b, m) then
+                destroyBullet(b)
+                destroyMob(m)
+            end
+        end
+    end
 
     camera.update(dt)
 
