@@ -137,7 +137,7 @@ local function newSlash(playerSlashEvent)
 
     local slash = { x = source.x, y = source.y, dx = 10, dy = 10, orientation = source.orientation }
 
-    local c = control.slash(slash, map, screen)
+    local c = control.slash(slash, source)
 
     controllers[slash] = c
 

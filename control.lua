@@ -410,12 +410,31 @@ function control.bullet(bullet, map, screen)
     return controller
 end
 
-function control.slash(slash)
+
+local slashBoxes = {
+    { x = -10, y = 10, dx = 2, dy = 2 },
+    { x = -10, y = 10, dx = 2, dy = 2 },
+    { x = -20, y = 10, dx = 23, dy = 20 },
+    { x = -20, y = 5, dx = 24, dy = 31 },
+    { x = -10, y = 30, dx = 55, dy = 40 },
+    { x = 30, y = 5, dx = 40, dy = 49 },
+    { x = 30, y = 5, dx = 40, dy = 49 },
+    { x = 30, y = 5, dx = 40, dy = 49 },
+    { x = 30, y = 5, dx = 40, dy = 9 },
+    { x = 30, y = 5, dx = 40, dy = 9 },
+    { x = 30, y = 5, dx = 5, dy = 5 },
+    { x = 30, y = 5, dx = 5, dy = 5 },
+}
+
+function control.slash(slash, player)
 
     local controller = {}
 
     local duration = 0
     local slash_total_duration = 0.7
+
+    local initX = player.x
+    local initY = player.y
 
     function controller.update(dt)
 
@@ -423,10 +442,18 @@ function control.slash(slash)
 
         local events = {}
 
-        slash.dx = slash.dx + slash.orientation * duration
-        slash.dy = slash.dy + duration
+        local slashBox = slashBoxes[math.min(math.floor(duration / 0.05) + 1, table.getn(slashBoxes))]
 
-        if duration > slash_total_duration then
+        if slash.orientation == 1 then
+            slash.x = initX + slashBox.x
+        else
+            slash.x = initX - slashBox.x - slashBox.dx + player.dx
+        end
+        slash.y = initY + slashBox.y
+        slash.dx = slashBox.dx
+        slash.dy = slashBox.dy
+
+        if duration > slash_total_duration or player.x ~= initX or player.y ~= initY then
             events.slashComplete = { from = slash }
         end
 
