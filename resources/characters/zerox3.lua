@@ -160,7 +160,8 @@ local animations = {
         quadAt(917, 234, 110, 68),
         quadAt(1027, 234, 110, 68),
         quadAt(1137, 234, 110, 68),
-        quadAt(1247, 234, 110, 68),
+        -- quadAt(1247, 234, 110, 68), this last frame does not look so good
+        quadAt(1247, 166, 110, 68),
         next = idle
     }
 }

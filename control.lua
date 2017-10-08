@@ -89,58 +89,77 @@ function control.player(player, map, keys)
     local shooting_timer = 0
     local shooting_duration = 0.25
 
+    local slashing_timer = 0
+    local slashing_duration = 0.7
+    local slashin_freeze = 0.5
+
     function controller.update(dt)
 
         local events = {}
 
         update_buttons(love.keyboard)
 
-        if was_pressed(keys.shoot) then
-            local o
-            if walling then
-                o = -player.orientation
-            else
-                o = player.orientation
-            end
-            events.playerShot = { from = player, orientation = o }
-            player.subState = "shooting"
-            shooting_timer = shooting_duration
-        end
-
-        shooting_timer = shooting_timer - dt
-        if shooting_timer <= 0 and player.subState == "shooting" then
-            player.subState = nil
-        end
-
-        if was_pressed(keys.slash) then
+        if was_pressed(keys.slash) and not airborne then
             slashing = true
-        end
-
-
-        if love.keyboard.isDown(keys.right) or love.keyboard.isDown(keys.left) then
-            free_powerjump = false
-        end
-
-        --may need to cancel dash
-        if love.keyboard.isDown(keys.right) and player.orientation == -1 then
-            dash_timer = 0
-            dashing = false
-        end
-        if love.keyboard.isDown(keys.left) and player.orientation == 1 then
-            dash_timer = 0
-            dashing = false
-        end
-
-        if was_pressed(keys.dash) then
-            if dash_timer <= 0 and dash_credit > 0 and not powerjump and not walling then
-                dashing = true
-                dash_timer = 0.25
-                dash_credit = dash_credit - 1
+            if slashing_timer <= 0 then
+                slashing_timer = slashing_duration
             end
-        elseif not airborne or walling then
-            dash_credit = 1
+        end
+        slashing_timer = slashing_timer - dt
+        if slashing_timer <= 0 and slashing then
+            slashing = false
         end
 
+        -- only allow player to move if not in slashing freeze
+        local frozen_slashing = slashing_timer >= (slashing_duration - slashin_freeze)
+        if frozen_slashing then
+            -- consume inputs
+            for key,value in pairs(buttons_actionable) do
+                buttons_actionable[key] = false
+            end
+        else
+            if was_pressed(keys.shoot) then
+                local o
+                if walling then
+                    o = -player.orientation
+                else
+                    o = player.orientation
+                end
+                events.playerShot = { from = player, orientation = o }
+                player.subState = "shooting"
+                shooting_timer = shooting_duration
+            end
+
+            shooting_timer = shooting_timer - dt
+            if shooting_timer <= 0 and player.subState == "shooting" then
+                player.subState = nil
+            end
+
+
+            if love.keyboard.isDown(keys.right) or love.keyboard.isDown(keys.left) then
+                free_powerjump = false
+            end
+
+            --may need to cancel dash
+            if love.keyboard.isDown(keys.right) and player.orientation == -1 then
+                dash_timer = 0
+                dashing = false
+            end
+            if love.keyboard.isDown(keys.left) and player.orientation == 1 then
+                dash_timer = 0
+                dashing = false
+            end
+
+            if was_pressed(keys.dash) then
+                if dash_timer <= 0 and dash_credit > 0 and not powerjump and not walling then
+                    dashing = true
+                    dash_timer = 0.25
+                    dash_credit = dash_credit - 1
+                end
+            elseif not airborne or walling then
+                dash_credit = 1
+            end
+        end
 
         if (dash_timer > 0) then
             dash_timer = dash_timer - dt
@@ -164,14 +183,14 @@ function control.player(player, map, keys)
 
         local moving = false
 
-        if love.keyboard.isDown(keys.right) and wall_jump_timer <= 0 then
+        if love.keyboard.isDown(keys.right) and wall_jump_timer <= 0 and not frozen_slashing then
 
             player.orientation = 1
 
             player.x = (player.x + x_speed * dt)
 
             moving = true
-        elseif love.keyboard.isDown(keys.left) and wall_jump_timer <= 0 then
+        elseif love.keyboard.isDown(keys.left) and wall_jump_timer <= 0 and not frozen_slashing then
 
             player.orientation = -1
 
