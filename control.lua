@@ -99,25 +99,32 @@ function control.player(player, map, keys)
 
         update_buttons(love.keyboard)
 
-        if was_pressed(keys.slash) and not airborne then
-            slashing = true
-            if slashing_timer <= 0 then
-                slashing_timer = slashing_duration
-            end
-        end
+
         slashing_timer = slashing_timer - dt
         if slashing_timer <= 0 and slashing then
             slashing = false
         end
 
+        shooting_timer = shooting_timer - dt
+        if shooting_timer <= 0 and player.subState == "shooting" then
+            player.subState = nil
+        end
+
+
         -- only allow player to move if not in slashing freeze
         local frozen_slashing = slashing_timer >= (slashing_duration - slashin_freeze)
         if frozen_slashing then
             -- consume inputs
-            for key,value in pairs(buttons_actionable) do
+            for key, value in pairs(buttons_actionable) do
                 buttons_actionable[key] = false
             end
         else
+            if was_pressed(keys.slash) and not airborne then
+                slashing = true
+                events.playerSlash = { from = player, orientation = player.orientation }
+                slashing_timer = slashing_duration
+            end
+
             if was_pressed(keys.shoot) then
                 local o
                 if walling then
@@ -129,12 +136,6 @@ function control.player(player, map, keys)
                 player.subState = "shooting"
                 shooting_timer = shooting_duration
             end
-
-            shooting_timer = shooting_timer - dt
-            if shooting_timer <= 0 and player.subState == "shooting" then
-                player.subState = nil
-            end
-
 
             if love.keyboard.isDown(keys.right) or love.keyboard.isDown(keys.left) then
                 free_powerjump = false
@@ -401,6 +402,32 @@ function control.bullet(bullet, map, screen)
 
         if (bullet.x < screen.x - margin) or (bullet.x > screen.x + screen.dx + margin) then
             events.bulletLost = { from = bullet }
+        end
+
+        return events
+    end
+
+    return controller
+end
+
+function control.slash(slash)
+
+    local controller = {}
+
+    local duration = 0
+    local slash_total_duration = 0.7
+
+    function controller.update(dt)
+
+        duration = duration + dt
+
+        local events = {}
+
+        slash.dx = slash.dx + slash.orientation * duration
+        slash.dy = slash.dy + duration
+
+        if duration > slash_total_duration then
+            events.slashComplete = { from = slash }
         end
 
         return events

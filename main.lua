@@ -9,6 +9,7 @@ local controllers = {}
 local players = {}
 local mobs = {}
 local bullets = {}
+local slashes = {}
 
 local screen = {}
 
@@ -131,6 +132,24 @@ local function newBullet(playerShotEvent)
     bullets[bullet] = true
 end
 
+local function newSlash(playerSlashEvent)
+    local source = playerSlashEvent.from
+
+    local slash = { x = source.x, y = source.y, dx = 10, dy = 10, orientation = source.orientation }
+
+    local c = control.slash(slash, map, screen)
+
+    controllers[slash] = c
+
+    slashes[slash] = true
+end
+
+local function endSlash(event)
+    local slash = event.from
+    controllers[slash] = nil
+    slashes[slash] = nil
+end
+
 
 local function destroyBullet(bullet)
     controllers[bullet] = nil
@@ -182,9 +201,15 @@ function love.update(dt)
         if events.bulletLost then
             bulletLost(events.bulletLost)
         end
+        if events.playerSlash then
+            newSlash(events.playerSlash)
+        end
+        if events.slashComplete then
+            endSlash(events.slashComplete)
+        end
     end
 
-    debug_data.things = { mobs, bullets }
+    debug_data.things = { events, mobs, bullets, slashes }
 
     for b, i in pairs(bullets) do
         for m, j in pairs(mobs) do
@@ -240,6 +265,10 @@ function love.draw()
 
     for i, a in pairs(animators) do
         a.draw()
+    end
+
+    for s, v in pairs(slashes) do
+        drawBox(s)
     end
 
     for i, a in pairs(debug_data.colliding) do
