@@ -3,6 +3,7 @@ local control = require "control"
 local tiles = require "tiles"
 local cameras = require "cameras"
 local collision = require "collision"
+local minimap = require "minimap"
 
 local animators = {}
 local controllers = {}
@@ -13,9 +14,11 @@ local slashes = {}
 
 local screen = {}
 
+
 local map = nil
 
 local camera
+local mini = nil
 
 local bulletSpriteSheet
 
@@ -88,17 +91,19 @@ function love.load()
     screen.dx = love.graphics.getWidth() / 2
     screen.dy = love.graphics.getHeight() / 2
 
+    local minimap_location = { x = 6 * screen.dx / 8, y = 6 * screen.dy / 8, dx = screen.dx / 8, dy = screen.dy / 8 }
+
+
     local camera_window_width = 100
     local camera_window = { x = screen.dx / 2 - camera_window_width / 2, y = screen.dy / 2 - 100, dx = camera_window_width, dy = 200 }
 
     map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)
 
-    table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's', shoot = 'd', slash='x' }))
+    table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's', shoot = 'd', slash = 'x' }))
 
     camera = cameras.windowCamera(camera_window, screen, players[1])
 
-
-
+    mini = minimap.minimap(screen, camera_window, map, players, minimap_location, 20)
 
     bulletSpriteSheet = dofile("resources/characters/bullet.lua")
 
@@ -176,7 +181,7 @@ function love.update(dt)
     --    debug_data.controllers = controllers
     --    debug_data.animators = animators
 
-    if(love.keyboard.isDown('f')) then
+    if (love.keyboard.isDown('f')) then
         createMob()
     end
 
@@ -277,6 +282,8 @@ function love.draw()
     for i, a in pairs(debug_data.colliding) do
         drawBox(a)
     end
+
+    mini.draw()
 
     deepPrint(debug_data)
     debug_data = {}
