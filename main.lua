@@ -103,7 +103,7 @@ function love.load()
 
     camera = cameras.windowCamera(camera_window, screen, players[1])
 
-    mini = minimap.minimap(screen, camera_window, map, players, minimap_location, 20)
+    mini = minimap.minimap(screen, map, players, minimap_location, 20, 40)
 
     bulletSpriteSheet = dofile("resources/characters/bullet.lua")
 

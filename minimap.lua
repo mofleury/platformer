@@ -2,7 +2,7 @@ local minimap = {}
 
 
 
-function minimap.minimap(screen, camera_window, map, players, location, scale_factor)
+function minimap.minimap(screen, map, players, location, scale_factor, lookahead)
 
     local minimap = {}
 
@@ -12,7 +12,7 @@ function minimap.minimap(screen, camera_window, map, players, location, scale_fa
 
     local function drawMiniBox(o)
         local b = { x = location.x + o.x / scale_factor, y = location.y + o.y / scale_factor, dx = o.dx / scale_factor, dy = o.dy / scale_factor }
-        love.graphics.rectangle('line', b.x, screen.dy - b.y + b.dy, b.dx, b.dy)
+        love.graphics.rectangle('line', -screen.x / scale_factor + b.x, -screen.y / scale_factor + screen.dy - b.y - b.dy, b.dx, b.dy)
     end
 
     function minimap.update(dt)
@@ -20,7 +20,9 @@ function minimap.minimap(screen, camera_window, map, players, location, scale_fa
 
     function minimap.draw()
 
-        for i, o in ipairs(map.obstacles) do
+        drawMiniBox(screen)
+
+        for i, o in ipairs(map.obstaclesAround(screen, lookahead)) do
             drawMiniBox(o)
         end
 
