@@ -400,7 +400,18 @@ function control.bullet(bullet, map, screen)
 
         bullet.x = bullet.x + speed * bullet.orientation
 
-        if (bullet.x < screen.x - margin) or (bullet.x > screen.x + screen.dx + margin) then
+        local obstacles = map.obstaclesAround(bullet, 3)
+
+        -- bullets should not go through walls
+        local colliding = false
+        for i, o in ipairs(obstacles) do
+            local c, d = collision.collide(bullet, o)
+            if (c) then
+                colliding = true
+            end
+        end
+
+        if colliding or (bullet.x < screen.x - margin) or (bullet.x > screen.x + screen.dx + margin) then
             events.bulletLost = { from = bullet }
         end
 

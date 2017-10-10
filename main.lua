@@ -219,6 +219,13 @@ function love.update(dt)
             end
         end
     end
+    for b, i in pairs(slashes) do
+        for m, j in pairs(mobs) do
+            if collision.overlap(b, m) then
+                destroyMob(m)
+            end
+        end
+    end
 
     camera.update(dt)
 
@@ -265,10 +272,6 @@ function love.draw()
 
     for i, a in pairs(animators) do
         a.draw()
-    end
-
-    for s, v in pairs(slashes) do
-        drawBox(s)
     end
 
     for i, a in pairs(debug_data.colliding) do
