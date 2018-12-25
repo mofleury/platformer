@@ -282,6 +282,9 @@ function love.draw()
     for i, a in pairs(debug_data.colliding) do
         drawBox(a)
     end
+    --    for i, a in pairs(slashes) do
+    --        drawBox(i)
+    --    end
 
     mini.draw()
 

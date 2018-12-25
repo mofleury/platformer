@@ -423,18 +423,18 @@ end
 
 
 local slashBoxes = {
-    { x = -10, y = 10, dx = 2, dy = 2 },
-    { x = -10, y = 10, dx = 2, dy = 2 },
-    { x = -20, y = 10, dx = 23, dy = 20 },
-    { x = -20, y = 5, dx = 24, dy = 31 },
-    { x = -10, y = 30, dx = 55, dy = 40 },
-    { x = 30, y = 5, dx = 40, dy = 49 },
-    { x = 30, y = 5, dx = 40, dy = 49 },
-    { x = 30, y = 5, dx = 40, dy = 49 },
-    { x = 30, y = 5, dx = 40, dy = 9 },
-    { x = 30, y = 5, dx = 40, dy = 9 },
-    { x = 30, y = 5, dx = 5, dy = 5 },
-    { x = 30, y = 5, dx = 5, dy = 5 },
+    { x = -5, y = 8, dx = 2, dy = 2 },
+    { x = -5, y = 8, dx = 2, dy = 2 },
+    { x = -15, y = 8, dx = 23, dy = 20 },
+    { x = -15, y = 3, dx = 24, dy = 31 },
+    { x = -5, y = 28, dx = 55, dy = 40 },
+    { x = 35, y = 3, dx = 40, dy = 49 },
+    { x = 35, y = 3, dx = 40, dy = 49 },
+    { x = 35, y = 3, dx = 40, dy = 49 },
+    { x = 35, y = 3, dx = 40, dy = 9 },
+    { x = 35, y = 3, dx = 40, dy = 9 },
+    { x = 35, y = 3, dx = 5, dy = 5 },
+    { x = 35, y = 3, dx = 5, dy = 5 },
 }
 
 function control.slash(slash, player)
