@@ -121,10 +121,13 @@ function control.player(player, map, keys)
             end
         else
             if was_pressed(keys.slash) then
-                if slash_ready and (airborne or not frozen_slashing) then
+                if slash_ready then
                     slashing = true
                     events.playerSlash = { from = player, orientation = player.orientation }
                     slashing_timer = slashing_duration
+                    if not airborne then
+                        frozen_slashing = true
+                    end
                 end
             end
 
@@ -194,6 +197,9 @@ function control.player(player, map, keys)
             player.x = (player.x + x_speed * dt)
 
             moving = true
+            if not airborne then
+                slashing = false
+            end
         elseif love.keyboard.isDown(keys.left) and wall_jump_timer <= 0 and not frozen_slashing then
 
             player.orientation = -1
@@ -201,6 +207,9 @@ function control.player(player, map, keys)
             player.x = (player.x - (x_speed * dt))
 
             moving = true
+            if not airborne then
+                slashing = false
+            end
         elseif wall_jump_timer > 0 then
             player.x = (player.x - player.orientation * (x_speed * dt))
         elseif free_powerjump then
@@ -209,11 +218,7 @@ function control.player(player, map, keys)
 
             player.x = (player.x + player.orientation * (x_speed * dt))
         elseif not (airborne or player.state == "landing") then
-            if slashing then
-                player.state = "slashing"
-            else
-                player.state = "idle"
-            end
+            player.state = "idle"
         end
 
         if dashing then
@@ -223,12 +228,20 @@ function control.player(player, map, keys)
                 player.state = "running"
             end
         elseif not dashing then
-            if slashing then
-                player.state = "jumping_slashing"
-            elseif y_velocity > 0 then
+            if y_velocity > 0 then
                 player.state = "jumping"
             else
                 player.state = "falling"
+            end
+        end
+        debug_data.slashing = slashing
+        debug_data.airborne = airborne
+        if slashing then
+            player.state = "slashing"
+            if airborne then
+                player.subState = "airborne"
+            else
+                player.subState = nil
             end
         end
 
@@ -335,11 +348,8 @@ function control.player(player, map, keys)
                 end
             end
             if details.bottom and not alignedVertically(details) then
-
-
-
                 y_velocity = 0
-                if airborne then
+                if airborne and not slashing then
                     player.state = "landing"
                 end
 

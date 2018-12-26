@@ -20,7 +20,7 @@ local animations = {
     wall_sliding_shooting = generator.resolveAnimation("wall-sliding-shooting", 0.05),
     wall_jumping = generator.resolveAnimation("wall-jumping", 0.05, { shooting = "wall_jumping_shooting" }, "jumping"),
     wall_jumping_shooting = generator.resolveAnimation("wall-jumping-shooting", 0.05),
-    slashing = generator.resolveAnimation("slashing", 0.05, nil, nil, nil, -9),
+    slashing = generator.resolveAnimation("slashing", 0.05, { airborne = "jumping_slashing" }, nil, nil, -9),
     jumping_slashing = generator.resolveAnimation("jumping-slashing", 0.05, nil, nil, nil, nil)
 }
 

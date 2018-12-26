@@ -77,6 +77,8 @@ end
 
 
 function love.load()
+    love.graphics.setDefaultFilter("nearest", "nearest", 1)
+
     if arg[#arg] == "-debug" then require("mobdebug").start()
     end
     if arg[#arg] == "-ideadebug" then
