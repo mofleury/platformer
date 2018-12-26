@@ -110,19 +110,22 @@ function control.player(player, map, keys)
             player.subState = nil
         end
 
+        local slash_ready = slashing_timer <= (slashing_duration - slashin_freeze)
 
         -- only allow player to move if not in slashing freeze
-        local frozen_slashing = slashing_timer >= (slashing_duration - slashin_freeze)
+        local frozen_slashing = not airborne and not slash_ready
         if frozen_slashing then
             -- consume inputs
             for key, value in pairs(buttons_actionable) do
                 buttons_actionable[key] = false
             end
         else
-            if was_pressed(keys.slash) and not airborne then
-                slashing = true
-                events.playerSlash = { from = player, orientation = player.orientation }
-                slashing_timer = slashing_duration
+            if was_pressed(keys.slash) then
+                if slash_ready and (airborne or not frozen_slashing) then
+                    slashing = true
+                    events.playerSlash = { from = player, orientation = player.orientation }
+                    slashing_timer = slashing_duration
+                end
             end
 
             if was_pressed(keys.shoot) then
@@ -206,7 +209,6 @@ function control.player(player, map, keys)
 
             player.x = (player.x + player.orientation * (x_speed * dt))
         elseif not (airborne or player.state == "landing") then
-
             if slashing then
                 player.state = "slashing"
             else
@@ -221,7 +223,9 @@ function control.player(player, map, keys)
                 player.state = "running"
             end
         elseif not dashing then
-            if y_velocity > 0 then
+            if slashing then
+                player.state = "jumping_slashing"
+            elseif y_velocity > 0 then
                 player.state = "jumping"
             else
                 player.state = "falling"

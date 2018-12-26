@@ -119,12 +119,13 @@ local function newBullet(playerShotEvent)
 
     local xb
     if playerShotEvent.orientation == 1 then
-        xb = source.x + frame.ax + 10
+        xb = source.x + frame.dx / 2 + 10
     else
-        xb = source.x + source.dx - frame.ax - 10
+        xb = source.x + source.dx - frame.dx / 2 - 10
     end
+    local yb = source.y + frame.dy / 2 - 5
 
-    local bullet = { x = xb, y = source.y + frame.ay - 5, dx = 10, dy = 10, orientation = playerShotEvent.orientation, state = "idle" }
+    local bullet = { x = xb, y = yb, dx = 10, dy = 10, orientation = playerShotEvent.orientation, state = "idle" }
 
     local c = control.bullet(bullet, map, screen)
 

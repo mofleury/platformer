@@ -35,8 +35,8 @@ function animation.animator(spritesheet, object, screen)
 
         local xCenter = object.x + object.dx / 2
 
-        local xDraw = xCenter - frame.dx / 2
-        local yDraw = object.y + frame.dy
+        local xDraw = xCenter - frame.ax
+        local yDraw = object.y + frame.dy + frame.ay
 
         local xScale
         if (object.orientation == 1) then
