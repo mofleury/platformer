@@ -109,8 +109,7 @@ function control.player(player, map, keys)
         return readyState
     end
     readyState.preserveXVelocity = function(airborne, backwards, movePressed)
-        -- don't know how to cleanly decide to break speed without canceling powerjumps from walls...
-        return airborne -- and (not backwards or not movePressed)
+        return airborne and (not backwards or not movePressed)
     end
 
 
@@ -302,13 +301,15 @@ function control.player(player, map, keys)
 
         timeSinceTransition = timeSinceTransition + dt
 
-        setState(state.after(timeSinceTransition))
+
 
 
         shooting_timer = shooting_timer - dt
         if shooting_timer <= 0 and player.subState["shooting"] == true then
             player.subState["shooting"] = nil
         end
+
+        local movePressed = love.keyboard.isDown(keys.right) or love.keyboard.isDown(keys.left)
 
         local backwards = false
 
@@ -317,6 +318,17 @@ function control.player(player, map, keys)
         end
         if love.keyboard.isDown(keys.left) and player.orientation == 1 then
             backwards = true
+        end
+
+        local stateBefore = state
+        setState(state.after(timeSinceTransition))
+
+        -- need to hack orientation if finishing a wall jump to be able to powerjump from wall
+        if state ~= stateBefore and stateBefore == wallJumpingState then
+            if backwards or not movePressed then
+                backwards = false
+                player.orientation = -player.orientation
+            end
         end
 
         if was_pressed(keys.slash) then
@@ -348,7 +360,6 @@ function control.player(player, map, keys)
         local moving = false
 
 
-        local movePressed = love.keyboard.isDown(keys.right) or love.keyboard.isDown(keys.left)
         local afterMove = state.canMove(timeSinceTransition, airborne, backwards, movePressed)
         if afterMove ~= nil then
             setState(afterMove)
