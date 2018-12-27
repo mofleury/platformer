@@ -301,9 +301,6 @@ function control.player(player, map, keys)
 
         timeSinceTransition = timeSinceTransition + dt
 
-
-
-
         shooting_timer = shooting_timer - dt
         if shooting_timer <= 0 and player.subState["shooting"] == true then
             player.subState["shooting"] = nil
@@ -323,11 +320,14 @@ function control.player(player, map, keys)
         local stateBefore = state
         setState(state.after(timeSinceTransition))
 
-        -- need to hack orientation if finishing a wall jump to be able to powerjump from wall
-        if state ~= stateBefore and stateBefore == wallJumpingState then
-            if backwards or not movePressed then
+        if state ~= stateBefore then
+            if stateBefore == wallJumpingState and (backwards or not movePressed) then
+                -- need to hack orientation if finishing a wall jump to be able to powerjump from wall
                 backwards = false
                 player.orientation = -player.orientation
+            elseif stateBefore == dashingState then
+                -- need to cancel speed after a dash
+                x_velocity = running_speed
             end
         end
 
