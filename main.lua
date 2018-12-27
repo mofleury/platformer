@@ -40,6 +40,7 @@ local function create_player(map, x, y, keys)
 
     player.orientation = 1
     player.state = "idle"
+    player.subState = {}
 
     controllers[player] = control.player(player, map, keys)
 

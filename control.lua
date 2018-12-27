@@ -106,8 +106,8 @@ function control.player(player, map, keys)
         end
 
         shooting_timer = shooting_timer - dt
-        if shooting_timer <= 0 and player.subState == "shooting" then
-            player.subState = nil
+        if shooting_timer <= 0 and player.subState["shooting"] == true then
+            player.subState["shooting"] = nil
         end
 
         local slash_ready = slashing_timer <= (slashing_duration - slashin_freeze)
@@ -139,7 +139,7 @@ function control.player(player, map, keys)
                     o = player.orientation
                 end
                 events.playerShot = { from = player, orientation = o }
-                player.subState = "shooting"
+                player.subState["shooting"] = true
                 shooting_timer = shooting_duration
             end
 
@@ -239,9 +239,9 @@ function control.player(player, map, keys)
         if slashing then
             player.state = "slashing"
             if airborne then
-                player.subState = "airborne"
+                player.subState["airborne"] = true
             else
-                player.subState = nil
+                player.subState["airborne"] = nil
             end
         end
 

@@ -13,14 +13,15 @@ function animation.animator(spritesheet, object, screen)
 
     local function currentAnimation()
 
-        if object.subState ~= nil and spritesheet.animations[object.state].alternates ~= nil then
-            local secondaryAnim = spritesheet.animations[object.state].alternates[object.subState]
-            if secondaryAnim ~= nil then
-                return spritesheet.animations[secondaryAnim]
+        local animations = spritesheet.animations[object.state];
+        if animations.alternates ~= nil then
+            for n, a in pairs(animations.alternates) do
+                if object.subState[n] == true then
+                    animations = spritesheet.animations[a]
+                end
             end
         end
-
-        return spritesheet.animations[object.state]
+        return animations
     end
 
     function animator.currentFrame()
