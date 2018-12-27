@@ -102,7 +102,7 @@ function love.load()
 
     map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)
 
-    table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's', shoot = 'd', slash = 'x' }))
+    table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's', shoot = 'd', slash = 'c' }))
 
     camera = cameras.windowCamera(camera_window, screen, players[1])
 

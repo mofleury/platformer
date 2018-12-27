@@ -52,192 +52,7 @@ local function was_pressed(button)
 end
 
 
-local running_speed = 200
-local dashing_speed = 450
 
-local dashing_duration = 0.25
-local shooting_duration = 0.25
-local slashing_duration = 0.7
-local slashin_freeze = 0.5
-local wall_jump_duration = 0.2
-local wall_land_stick = 0.2
-local walling_speed_cap = -200
-
-local readyState = {}
-local dashingState = {}
-local powerJumpingState = {}
-local slashingState = {}
-local wallingState = {}
-local wallJumpingState = {}
-
-readyState.name = "ready"
-readyState.onDash = dashingState
-readyState.onSlash = slashingState
-readyState.onShoot = readyState
-readyState.onLand = readyState
-readyState.onWall = wallingState
-readyState.onJump = function(dt, airborne)
-    if airborne then
-        return nil
-    end
-    return readyState
-end
-readyState.forceMove = false
-readyState.x_speed = running_speed
-readyState.y_velocity_cap = function(dt, y_velocity)
-    return y_velocity
-end
-readyState.after = function(dt)
-    return readyState
-end
-readyState.canMove = function(dt, airborne, backwards, movePressed)
-    return readyState
-end
-
-
-dashingState.name = "dashing"
-dashingState.onDash = nil
-dashingState.onSlash = nil
-dashingState.onShoot = dashingState
-dashingState.onLand = dashingState
-dashingState.onWall = wallingState
-dashingState.forceMove = true
-dashingState.onJump = function(dt, airborne)
-    if airborne then
-        return nil
-    end
-    return powerJumpingState
-end
-dashingState.x_speed = dashing_speed
-dashingState.y_velocity_cap = function(dt, y_velocity)
-    return 0
-end
-dashingState.after = function(dt)
-    if (dt <= dashing_duration) then
-        return dashingState
-    end
-    return readyState
-end
-dashingState.canMove = function(dt, airborne, backwards, movePressed)
-    -- dash can be cancelled by going backwards
-    if backwards then
-        return readyState
-    end
-    return nil
-end
-
-powerJumpingState.name = "powerJumping"
-powerJumpingState.onDash = nil
-powerJumpingState.onSlash = slashingState
-powerJumpingState.onShoot = powerJumpingState
-powerJumpingState.onLand = readyState
-powerJumpingState.onWall = wallingState
-powerJumpingState.forceMove = true
-powerJumpingState.onJump = function(dt, airborne)
-    return nil
-end
-powerJumpingState.x_speed = dashing_speed
-powerJumpingState.y_velocity_cap = function(dt, y_velocity)
-    return y_velocity
-end
-powerJumpingState.after = function(dt)
-    return powerJumpingState
-end
-powerJumpingState.canMove = function(dt, airborne, backwards, movePressed)
-    -- dash can be cancelled by going backwards
-    if backwards then
-        return readyState
-    end
-    return nil
-end
-
-slashingState.name = "slashing"
-slashingState.onDash = nil
-slashingState.onSlash = nil
-slashingState.onShoot = nil
-slashingState.onLand = slashingState
-slashingState.onWall = wallingState
-slashingState.forceMove = false
-slashingState.onJump = function(dt, airborne)
-    if dt > slashin_freeze then
-        return readyState
-    end
-    return nil
-end
-slashingState.x_speed = running_speed
-slashingState.y_velocity_cap = function(dt, y_velocity)
-    return y_velocity
-end
-slashingState.after = function(dt)
-    if (dt <= slashing_duration) then
-        return slashingState
-    end
-    return readyState
-end
-slashingState.canMove = function(dt, airborne, backwards, movePressed)
-    -- only allow player to move if not in slashing freeze
-    if dt <= slashin_freeze then
-        if airborne then
-            return slashingState
-        end
-        return nil
-    end
-    return readyState
-end
-
-wallingState.name = "walling"
-wallingState.onDash = nil
-wallingState.onSlash = nil
-wallingState.onShoot = wallingState
-wallingState.onLand = readyState
-wallingState.forceMove = false
-wallingState.onWall = wallingState
-wallingState.onJump = function(dt, airborne)
-    return wallJumpingState
-end
-wallingState.x_speed = running_speed
-wallingState.y_velocity_cap = function(dt, y_velocity)
-    if dt <= wall_land_stick then
-        return 0
-    end
-    return math.max(y_velocity, walling_speed_cap)
-end
-wallingState.after = function(dt)
-    return wallingState
-end
-wallingState.canMove = function(dt, airborne, backwards, movePressed)
-    if not backwards and movePressed then
-        return wallingState
-    end
-    return readyState
-end
-
-wallJumpingState.name = "wallJumping"
-wallJumpingState.onDash = dashingState
-wallJumpingState.onSlash = slashingState
-wallJumpingState.onShoot = wallJumpingState
-wallJumpingState.onLand = readyState
-wallJumpingState.onWall = wallJumpingState
-wallJumpingState.forceMove = true
-wallJumpingState.onJump = function(dt, airborne)
-    return nil
-end
-wallJumpingState.x_speed = -running_speed
-wallJumpingState.y_velocity_cap = function(dt, y_velocity)
-    return y_velocity
-end
-wallJumpingState.after = function(dt)
-    if dt <= wall_jump_duration then
-        return wallJumpingState
-    end
-    return readyState
-end
-wallJumpingState.canMove = function(dt, airborne, backwards, movePressed)
-    if dt > wall_jump_duration and backwards then
-        return readyState
-    end
-    return nil
-end
 
 function control.player(player, map, keys)
 
@@ -252,10 +67,196 @@ function control.player(player, map, keys)
     local gravity = -800
     local jump_height = 300
 
+    local running_speed = 200
+    local dashing_speed = 450
 
+    local dashing_duration = 0.25
+    local shooting_duration = 0.25
+    local slashing_duration = 0.7
+    local slashin_freeze = 0.5
+    local wall_jump_duration = 0.2
+    local wall_land_stick = 0.2
+    local walling_speed_cap = -200
+
+    local readyState = {}
+    local dashingState = {}
+    local powerJumpingState = {}
+    local slashingState = {}
+    local wallingState = {}
+    local wallJumpingState = {}
+
+    readyState.name = "ready"
+    readyState.onDash = dashingState
+    readyState.onSlash = slashingState
+    readyState.onShoot = readyState
+    readyState.onLand = readyState
+    readyState.onWall = wallingState
+    readyState.onJump = function(dt, airborne)
+        if airborne then
+            return nil
+        end
+        return readyState
+    end
+    readyState.forceMove = false
+    readyState.x_speed = running_speed
+    readyState.y_velocity_cap = function(dt, y_velocity)
+        return y_velocity
+    end
+    readyState.after = function(dt)
+        return readyState
+    end
+    readyState.canMove = function(dt, airborne, backwards, movePressed)
+        return readyState
+    end
+
+
+    dashingState.name = "dashing"
+    dashingState.onDash = nil
+    dashingState.onSlash = nil
+    dashingState.onShoot = dashingState
+    dashingState.onLand = dashingState
+    dashingState.onWall = wallingState
+    dashingState.forceMove = true
+    dashingState.onJump = function(dt, airborne)
+        if airborne then
+            return nil
+        end
+        return powerJumpingState
+    end
+    dashingState.x_speed = dashing_speed
+    dashingState.y_velocity_cap = function(dt, y_velocity)
+        return 0
+    end
+    dashingState.after = function(dt)
+        if (dt <= dashing_duration) then
+            return dashingState
+        end
+        return readyState
+    end
+    dashingState.canMove = function(dt, airborne, backwards, movePressed)
+        -- dash can be cancelled by going backwards
+        if backwards then
+            return readyState
+        end
+        return nil
+    end
+
+    powerJumpingState.name = "powerJumping"
+    powerJumpingState.onDash = nil
+    powerJumpingState.onSlash = slashingState
+    powerJumpingState.onShoot = powerJumpingState
+    powerJumpingState.onLand = readyState
+    powerJumpingState.onWall = wallingState
+    powerJumpingState.forceMove = true
+    powerJumpingState.onJump = function(dt, airborne)
+        return nil
+    end
+    powerJumpingState.x_speed = dashing_speed
+    powerJumpingState.y_velocity_cap = function(dt, y_velocity)
+        return y_velocity
+    end
+    powerJumpingState.after = function(dt)
+        return powerJumpingState
+    end
+    powerJumpingState.canMove = function(dt, airborne, backwards, movePressed)
+        -- dash can be cancelled by going backwards
+        if backwards then
+            return readyState
+        end
+        return nil
+    end
+
+    slashingState.name = "slashing"
+    slashingState.onDash = nil
+    slashingState.onSlash = nil
+    slashingState.onShoot = nil
+    slashingState.onLand = slashingState
+    slashingState.onWall = wallingState
+    slashingState.forceMove = false
+    slashingState.onJump = function(dt, airborne)
+        if dt > slashin_freeze then
+            return readyState
+        end
+        return nil
+    end
+    slashingState.x_speed = running_speed
+    slashingState.y_velocity_cap = function(dt, y_velocity)
+        return y_velocity
+    end
+    slashingState.after = function(dt)
+        if (dt <= slashing_duration) then
+            return slashingState
+        end
+        return readyState
+    end
+    slashingState.canMove = function(dt, airborne, backwards, movePressed)
+        -- only allow player to move if not in slashing freeze
+        if dt <= slashin_freeze then
+            if airborne then
+                return slashingState
+            end
+            return nil
+        end
+        return readyState
+    end
+
+    wallingState.name = "walling"
+    wallingState.onDash = nil
+    wallingState.onSlash = nil
+    wallingState.onShoot = wallingState
+    wallingState.onLand = readyState
+    wallingState.forceMove = false
+    wallingState.onWall = wallingState
+    wallingState.onJump = function(dt, airborne)
+        return wallJumpingState
+    end
+    wallingState.x_speed = running_speed
+    wallingState.y_velocity_cap = function(dt, y_velocity)
+        if dt <= wall_land_stick then
+            return 0
+        end
+        return math.max(y_velocity, walling_speed_cap)
+    end
+    wallingState.after = function(dt)
+        return wallingState
+    end
+    wallingState.canMove = function(dt, airborne, backwards, movePressed)
+        if not backwards and movePressed then
+            return wallingState
+        end
+        return readyState
+    end
+
+    wallJumpingState.name = "wallJumping"
+    wallJumpingState.onDash = dashingState
+    wallJumpingState.onSlash = slashingState
+    wallJumpingState.onShoot = wallJumpingState
+    wallJumpingState.onLand = readyState
+    wallJumpingState.onWall = wallJumpingState
+    wallJumpingState.forceMove = true
+    wallJumpingState.onJump = function(dt, airborne)
+        return nil
+    end
+    wallJumpingState.x_speed = -running_speed
+    wallJumpingState.y_velocity_cap = function(dt, y_velocity)
+        return y_velocity
+    end
+    wallJumpingState.after = function(dt)
+        if dt <= wall_jump_duration then
+            return wallJumpingState
+        end
+        return readyState
+    end
+    wallJumpingState.canMove = function(dt, airborne, backwards, movePressed)
+        if dt > wall_jump_duration and backwards then
+            return readyState
+        end
+        return nil
+    end
 
     local airborne = true
 
+    local x_velocity = 0
     local y_velocity = 0
 
     local state = readyState
@@ -300,7 +301,6 @@ function control.player(player, map, keys)
         end
 
         if was_pressed(keys.slash) then
-
             local next = state.onSlash
             if next ~= nil then
                 setState(next)
@@ -335,22 +335,33 @@ function control.player(player, map, keys)
             setState(afterMove)
         end
 
+        debug_data.x_velocity = x_velocity
+
+
+        local powerSlash = state == slashingState and airborne and not backwards
+        if powerSlash then
+            -- preserve velocity
+        else
+            x_velocity = state.x_speed
+        end
+
+
         if love.keyboard.isDown(keys.right) and afterMove ~= nil then
             player.orientation = 1
 
-            player.x = (player.x + state.x_speed * dt)
+            player.x = (player.x + x_velocity * dt)
 
             moving = true
 
         elseif love.keyboard.isDown(keys.left) and afterMove ~= nil then
             player.orientation = -1
 
-            player.x = (player.x - (state.x_speed * dt))
+            player.x = (player.x - (x_velocity * dt))
 
             moving = true
 
-        elseif state.forceMove then
-            player.x = (player.x + player.orientation * (state.x_speed * dt))
+        elseif state.forceMove or powerSlash then
+            player.x = (player.x + player.orientation * (x_velocity * dt))
         elseif not (airborne or player.state == "landing") then
             player.state = "idle"
         end
