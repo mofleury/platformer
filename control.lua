@@ -108,6 +108,10 @@ function control.player(player, map, keys)
     readyState.canMove = function(dt, airborne, backwards, movePressed)
         return readyState
     end
+    readyState.preserveXVelocity = function(airborne, backwards, movePressed)
+        -- don't know how to cleanly decide to break speed without canceling powerjumps from walls...
+        return airborne -- and (not backwards or not movePressed)
+    end
 
 
     dashingState.name = "dashing"
@@ -140,6 +144,9 @@ function control.player(player, map, keys)
         end
         return nil
     end
+    dashingState.preserveXVelocity = function(airborne, backwards, movePressed)
+        return false
+    end
 
     powerJumpingState.name = "powerJumping"
     powerJumpingState.onDash = nil
@@ -164,6 +171,9 @@ function control.player(player, map, keys)
             return readyState
         end
         return nil
+    end
+    powerJumpingState.preserveXVelocity = function(airborne, backwards, movePressed)
+        return airborne and (not backwards or not movePressed)
     end
 
     slashingState.name = "slashing"
@@ -199,6 +209,9 @@ function control.player(player, map, keys)
         end
         return readyState
     end
+    slashingState.preserveXVelocity = function(airborne, backwards, movePressed)
+        return airborne and (not backwards or not movePressed)
+    end
 
     wallingState.name = "walling"
     wallingState.onDash = nil
@@ -226,6 +239,9 @@ function control.player(player, map, keys)
         end
         return readyState
     end
+    wallingState.preserveXVelocity = function(airborne, backwards, movePressed)
+        return false
+    end
 
     wallJumpingState.name = "wallJumping"
     wallJumpingState.onDash = dashingState
@@ -252,6 +268,9 @@ function control.player(player, map, keys)
             return readyState
         end
         return nil
+    end
+    wallJumpingState.preserveXVelocity = function(airborne, backwards, movePressed)
+        return false
     end
 
     local airborne = true
@@ -336,13 +355,16 @@ function control.player(player, map, keys)
         end
 
         debug_data.x_velocity = x_velocity
+        debug_data.backwards = backwards
 
-
-        local powerSlash = state == slashingState and airborne and not backwards
-        if powerSlash then
+        if state.preserveXVelocity(airborne, backwards, movePressed) then
             -- preserve velocity
+            x_velocity = math.max(state.x_speed, math.abs(x_velocity))
         else
             x_velocity = state.x_speed
+        end
+        if state == wallJumpingState and love.keyboard.isDown(keys.dash) then
+            x_velocity = -dashing_speed
         end
 
 
@@ -360,7 +382,7 @@ function control.player(player, map, keys)
 
             moving = true
 
-        elseif state.forceMove or powerSlash then
+        elseif state.forceMove then
             player.x = (player.x + player.orientation * (x_velocity * dt))
         elseif not (airborne or player.state == "landing") then
             player.state = "idle"
