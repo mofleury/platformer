@@ -51,6 +51,81 @@ local function was_pressed(button)
     return false
 end
 
+
+local dashing_duration = 0.25
+local shooting_duration = 0.25
+local slashing_duration = 0.7
+local slashin_freeze = 0.5
+
+local readyState = {}
+local jumpingState = {}
+local dashingState = {}
+local slashingState = {}
+
+readyState.name = "ready"
+readyState.onDash = dashingState
+readyState.onSlash = slashingState
+readyState.onShoot = readyState
+readyState.onJump = jumpingState
+readyState.after = function(dt)
+    return readyState
+end
+readyState.canMove = function(dt, airborne)
+    return readyState
+end
+
+
+jumpingState.name = "jumping"
+jumpingState.onDash = dashingState
+jumpingState.onSlash = slashingState
+jumpingState.onShoot = jumpingState
+jumpingState.onJump = nil
+jumpingState.after = function(dt)
+    return jumpingState
+end
+jumpingState.canMove = function(dt, airborne)
+    return jumpingState
+end
+
+dashingState.name = "dashing"
+dashingState.onDash = nil
+dashingState.onSlash = nil
+dashingState.onShoot = dashingState
+dashingState.onJump = nil
+dashingState.after = function(dt)
+    if (dt <= dashing_duration) then
+        return dashingState
+    end
+    return readyState
+end
+dashingState.canMove = function(dt, airborne)
+    return nil
+end
+
+slashingState.name = "slashing"
+slashingState.onDash = nil
+slashingState.onSlash = nil
+slashingState.onShoot = nil
+slashingState.onJump = nil
+slashingState.after = function(dt)
+    if (dt <= slashing_duration) then
+        return slashingState
+    end
+    return readyState
+end
+slashingState.canMove = function(dt, airborne)
+    -- only allow player to move if not in slashing freeze
+    if dt <= slashin_freeze then
+        if airborne then
+            return slashingState
+        end
+        return nil
+    end
+    return readyState
+end
+
+
+
 function control.player(player, map, keys)
 
     table.insert(action_buttons, keys.jump)
@@ -86,18 +161,31 @@ function control.player(player, map, keys)
     local walling = false
     local slashing = false
 
+    local state = readyState
+    local timeSinceTransition = 0
+
     local shooting_timer = 0
-    local shooting_duration = 0.25
 
     local slashing_timer = 0
-    local slashing_duration = 0.7
-    local slashin_freeze = 0.5
+
+    local function setState(s)
+        if state ~= s then
+            state = s
+            timeSinceTransition = 0
+        end
+        debug_data.state = state.name
+    end
+
 
     function controller.update(dt)
 
         local events = {}
 
         update_buttons(love.keyboard)
+
+        timeSinceTransition = timeSinceTransition + dt
+
+        setState(state.after(timeSinceTransition))
 
 
         slashing_timer = slashing_timer - dt
@@ -110,24 +198,19 @@ function control.player(player, map, keys)
             player.subState["shooting"] = nil
         end
 
-        local slash_ready = slashing_timer <= (slashing_duration - slashin_freeze)
-
-        -- only allow player to move if not in slashing freeze
-        local frozen_slashing = not airborne and not slash_ready
-        if frozen_slashing then
+        if state.canMove(timeSinceTransition, airborne) == nil then
             -- consume inputs
             for key, value in pairs(buttons_actionable) do
                 buttons_actionable[key] = false
             end
         else
             if was_pressed(keys.slash) then
-                if slash_ready then
-                    slashing = true
+
+                local next = state.onSlash
+                if next ~= nil then
+                    setState(next)
+
                     events.playerSlash = { from = player, orientation = player.orientation }
-                    slashing_timer = slashing_duration
-                    if not airborne then
-                        frozen_slashing = true
-                    end
                 end
             end
 
@@ -190,26 +273,29 @@ function control.player(player, map, keys)
 
         local moving = false
 
-        if love.keyboard.isDown(keys.right) and wall_jump_timer <= 0 and not frozen_slashing then
+
+        local afterMove = state.canMove(timeSinceTransition, airborne)
+        if love.keyboard.isDown(keys.right) and wall_jump_timer <= 0 and afterMove ~= nil then
+
+            setState(afterMove)
 
             player.orientation = 1
 
             player.x = (player.x + x_speed * dt)
 
             moving = true
-            if not airborne then
-                slashing = false
-            end
-        elseif love.keyboard.isDown(keys.left) and wall_jump_timer <= 0 and not frozen_slashing then
+
+        elseif love.keyboard.isDown(keys.left) and wall_jump_timer <= 0 and afterMove ~= nil then
+
+            setState(afterMove)
 
             player.orientation = -1
 
             player.x = (player.x - (x_speed * dt))
 
             moving = true
-            if not airborne then
-                slashing = false
-            end
+
+
         elseif wall_jump_timer > 0 then
             player.x = (player.x - player.orientation * (x_speed * dt))
         elseif free_powerjump then
@@ -234,9 +320,8 @@ function control.player(player, map, keys)
                 player.state = "falling"
             end
         end
-        debug_data.slashing = slashing
-        debug_data.airborne = airborne
-        if slashing then
+
+        if state == slashingState then
             player.state = "slashing"
             if airborne then
                 player.subState["airborne"] = true
@@ -349,7 +434,7 @@ function control.player(player, map, keys)
             end
             if details.bottom and not alignedVertically(details) then
                 y_velocity = 0
-                if airborne and not slashing then
+                if airborne and state ~= slashingState then
                     player.state = "landing"
                 end
 
