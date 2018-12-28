@@ -80,8 +80,10 @@ function control.player(player, map, keys)
 
 
     local airborne = true
-
     local dash_credit = 1
+    local timeSinceTransition = 0
+    local x_velocity = 0
+    local y_velocity = 0
 
     local readyState = {}
     local dashingState = {}
@@ -108,7 +110,7 @@ function control.player(player, map, keys)
     readyState.onShoot = readyState
     readyState.onLand = readyState
     readyState.onWall = wallingState
-    readyState.onJump = function(dt, airborne)
+    readyState.onJump = function()
         if airborne then
             return nil
         end
@@ -116,16 +118,16 @@ function control.player(player, map, keys)
     end
     readyState.forceMove = false
     readyState.x_speed = running_speed
-    readyState.y_velocity_cap = function(dt, y_velocity)
+    readyState.y_velocity_cap = function()
         return y_velocity
     end
-    readyState.after = function(dt)
+    readyState.after = function()
         return readyState
     end
-    readyState.canMove = function(dt, airborne, backwards, movePressed)
+    readyState.canMove = function(backwards, movePressed)
         return readyState
     end
-    readyState.preserveXVelocity = function(airborne, backwards, movePressed)
+    readyState.preserveXVelocity = function(backwards, movePressed)
         return airborne and (not backwards or not movePressed)
     end
 
@@ -137,30 +139,30 @@ function control.player(player, map, keys)
     dashingState.onLand = dashingState
     dashingState.onWall = wallingState
     dashingState.forceMove = true
-    dashingState.onJump = function(dt, airborne)
+    dashingState.onJump = function()
         if airborne then
             return nil
         end
         return powerJumpingState
     end
     dashingState.x_speed = dashing_speed
-    dashingState.y_velocity_cap = function(dt, y_velocity)
+    dashingState.y_velocity_cap = function()
         return 0
     end
-    dashingState.after = function(dt)
-        if (dt <= dashing_duration) then
+    dashingState.after = function()
+        if (timeSinceTransition <= dashing_duration) then
             return dashingState
         end
         return readyState
     end
-    dashingState.canMove = function(dt, airborne, backwards, movePressed)
+    dashingState.canMove = function(backwards, movePressed)
         -- dash can be cancelled by going backwards
         if backwards then
             return readyState
         end
         return nil
     end
-    dashingState.preserveXVelocity = function(airborne, backwards, movePressed)
+    dashingState.preserveXVelocity = function(backwards, movePressed)
         return false
     end
 
@@ -171,24 +173,24 @@ function control.player(player, map, keys)
     powerJumpingState.onLand = readyState
     powerJumpingState.onWall = wallingState
     powerJumpingState.forceMove = true
-    powerJumpingState.onJump = function(dt, airborne)
+    powerJumpingState.onJump = function()
         return nil
     end
     powerJumpingState.x_speed = dashing_speed
-    powerJumpingState.y_velocity_cap = function(dt, y_velocity)
+    powerJumpingState.y_velocity_cap = function()
         return y_velocity
     end
-    powerJumpingState.after = function(dt)
+    powerJumpingState.after = function()
         return powerJumpingState
     end
-    powerJumpingState.canMove = function(dt, airborne, backwards, movePressed)
+    powerJumpingState.canMove = function(backwards, movePressed)
         -- dash can be cancelled by going backwards
         if backwards then
             return readyState
         end
         return nil
     end
-    powerJumpingState.preserveXVelocity = function(airborne, backwards, movePressed)
+    powerJumpingState.preserveXVelocity = function(backwards, movePressed)
         return airborne and (not backwards or not movePressed)
     end
 
@@ -199,25 +201,25 @@ function control.player(player, map, keys)
     slashingState.onLand = slashingState
     slashingState.onWall = wallingState
     slashingState.forceMove = false
-    slashingState.onJump = function(dt, airborne)
-        if dt > slashin_freeze then
+    slashingState.onJump = function()
+        if timeSinceTransition > slashin_freeze then
             return readyState
         end
         return nil
     end
     slashingState.x_speed = running_speed
-    slashingState.y_velocity_cap = function(dt, y_velocity)
+    slashingState.y_velocity_cap = function()
         return y_velocity
     end
-    slashingState.after = function(dt)
-        if (dt <= slashing_duration) then
+    slashingState.after = function()
+        if (timeSinceTransition <= slashing_duration) then
             return slashingState
         end
         return readyState
     end
-    slashingState.canMove = function(dt, airborne, backwards, movePressed)
+    slashingState.canMove = function(backwards, movePressed)
         -- only allow player to move if not in slashing freeze
-        if dt <= slashin_freeze then
+        if timeSinceTransition <= slashin_freeze then
             if airborne then
                 return slashingState
             end
@@ -225,7 +227,7 @@ function control.player(player, map, keys)
         end
         return readyState
     end
-    slashingState.preserveXVelocity = function(airborne, backwards, movePressed)
+    slashingState.preserveXVelocity = function(backwards, movePressed)
         return airborne and (not backwards or not movePressed)
     end
 
@@ -236,26 +238,26 @@ function control.player(player, map, keys)
     wallingState.onLand = readyState
     wallingState.forceMove = false
     wallingState.onWall = wallingState
-    wallingState.onJump = function(dt, airborne)
+    wallingState.onJump = function()
         return wallJumpingState
     end
     wallingState.x_speed = running_speed
-    wallingState.y_velocity_cap = function(dt, y_velocity)
-        if dt <= wall_land_stick then
+    wallingState.y_velocity_cap = function()
+        if timeSinceTransition <= wall_land_stick then
             return 0
         end
         return math.max(y_velocity, walling_speed_cap)
     end
-    wallingState.after = function(dt)
+    wallingState.after = function()
         return wallingState
     end
-    wallingState.canMove = function(dt, airborne, backwards, movePressed)
+    wallingState.canMove = function(backwards, movePressed)
         if not backwards and movePressed then
             return wallingState
         end
         return readyState
     end
-    wallingState.preserveXVelocity = function(airborne, backwards, movePressed)
+    wallingState.preserveXVelocity = function(backwards, movePressed)
         return false
     end
 
@@ -266,35 +268,33 @@ function control.player(player, map, keys)
     wallJumpingState.onLand = readyState
     wallJumpingState.onWall = wallJumpingState
     wallJumpingState.forceMove = true
-    wallJumpingState.onJump = function(dt, airborne)
+    wallJumpingState.onJump = function()
         return nil
     end
     wallJumpingState.x_speed = -running_speed
-    wallJumpingState.y_velocity_cap = function(dt, y_velocity)
+    wallJumpingState.y_velocity_cap = function()
         return y_velocity
     end
-    wallJumpingState.after = function(dt)
-        if dt <= wall_jump_duration then
+    wallJumpingState.after = function()
+        if timeSinceTransition <= wall_jump_duration then
             return wallJumpingState
         end
         return readyState
     end
-    wallJumpingState.canMove = function(dt, airborne, backwards, movePressed)
-        if dt > wall_jump_duration and backwards then
+    wallJumpingState.canMove = function(backwards, movePressed)
+        if timeSinceTransition > wall_jump_duration and backwards then
             return readyState
         end
         return nil
     end
-    wallJumpingState.preserveXVelocity = function(airborne, backwards, movePressed)
+    wallJumpingState.preserveXVelocity = function(backwards, movePressed)
         return false
     end
 
 
-    local x_velocity = 0
-    local y_velocity = 0
 
     local state = readyState
-    local timeSinceTransition = 0
+
 
     local shooting_timer = 0
 
@@ -336,7 +336,7 @@ function control.player(player, map, keys)
         end
 
         local stateBefore = state
-        setState(state.after(timeSinceTransition))
+        setState(state.after())
 
         if state ~= stateBefore then
             if stateBefore == wallJumpingState and (backwards or not movePressed) then
@@ -381,7 +381,7 @@ function control.player(player, map, keys)
         local moving = false
 
 
-        local afterMove = state.canMove(timeSinceTransition, airborne, backwards, movePressed)
+        local afterMove = state.canMove(backwards, movePressed)
         if afterMove ~= nil then
             setState(afterMove)
         end
@@ -389,7 +389,7 @@ function control.player(player, map, keys)
         debug_data.x_velocity = x_velocity
         debug_data.backwards = backwards
 
-        if state.preserveXVelocity(airborne, backwards, movePressed) then
+        if state.preserveXVelocity(backwards, movePressed) then
             -- preserve velocity
             x_velocity = math.max(state.x_speed, math.abs(x_velocity))
         else
@@ -443,7 +443,7 @@ function control.player(player, map, keys)
             end
         end
 
-        local afterJump = state.onJump(timeSinceTransition, airborne)
+        local afterJump = state.onJump()
         if was_pressed(keys.jump) and afterJump ~= nil then
 
             setState(afterJump)
@@ -472,7 +472,7 @@ function control.player(player, map, keys)
         if airborne then
             y_velocity = y_velocity + gravity * dt
         end
-        y_velocity = state.y_velocity_cap(timeSinceTransition, y_velocity)
+        y_velocity = state.y_velocity_cap()
 
         debug_data.colliding = {}
 
@@ -516,7 +516,7 @@ function control.player(player, map, keys)
                         if (afterWall ~= nil) then
                             setState(afterWall)
                         end
-                        y_velocity = state.y_velocity_cap(timeSinceTransition, y_velocity)
+                        y_velocity = state.y_velocity_cap()
                     end
                 else -- right
                     player.x = (details.right.x - player.dx - 1)
@@ -526,7 +526,7 @@ function control.player(player, map, keys)
                         if (afterWall ~= nil) then
                             setState(afterWall)
                         end
-                        y_velocity = state.y_velocity_cap(timeSinceTransition, y_velocity)
+                        y_velocity = state.y_velocity_cap()
                     end
                 end
             end
