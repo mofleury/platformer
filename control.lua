@@ -78,6 +78,11 @@ function control.player(player, map, keys)
     local wall_land_stick = 0.2
     local walling_speed_cap = -200
 
+
+    local airborne = true
+
+    local dash_credit = 1
+
     local readyState = {}
     local dashingState = {}
     local powerJumpingState = {}
@@ -85,8 +90,20 @@ function control.player(player, map, keys)
     local wallingState = {}
     local wallJumpingState = {}
 
+    local dashIfAvailable = function()
+        if not airborne then
+            return dashingState
+        elseif (dash_credit > 0) then
+            dash_credit = dash_credit - 1;
+            return dashingState
+
+        else
+            return nil
+        end
+    end
+
     readyState.name = "ready"
-    readyState.onDash = dashingState
+    readyState.onDash = dashIfAvailable
     readyState.onSlash = slashingState
     readyState.onShoot = readyState
     readyState.onLand = readyState
@@ -114,7 +131,7 @@ function control.player(player, map, keys)
 
 
     dashingState.name = "dashing"
-    dashingState.onDash = nil
+    dashingState.onDash = function() return nil end
     dashingState.onSlash = nil
     dashingState.onShoot = dashingState
     dashingState.onLand = dashingState
@@ -148,7 +165,7 @@ function control.player(player, map, keys)
     end
 
     powerJumpingState.name = "powerJumping"
-    powerJumpingState.onDash = nil
+    powerJumpingState.onDash = function() return nil end
     powerJumpingState.onSlash = slashingState
     powerJumpingState.onShoot = powerJumpingState
     powerJumpingState.onLand = readyState
@@ -176,7 +193,7 @@ function control.player(player, map, keys)
     end
 
     slashingState.name = "slashing"
-    slashingState.onDash = nil
+    slashingState.onDash = function() return nil end
     slashingState.onSlash = nil
     slashingState.onShoot = nil
     slashingState.onLand = slashingState
@@ -213,7 +230,7 @@ function control.player(player, map, keys)
     end
 
     wallingState.name = "walling"
-    wallingState.onDash = nil
+    wallingState.onDash = function() return nil end
     wallingState.onSlash = nil
     wallingState.onShoot = wallingState
     wallingState.onLand = readyState
@@ -243,7 +260,7 @@ function control.player(player, map, keys)
     end
 
     wallJumpingState.name = "wallJumping"
-    wallJumpingState.onDash = dashingState
+    wallJumpingState.onDash = dashIfAvailable
     wallJumpingState.onSlash = slashingState
     wallJumpingState.onShoot = wallJumpingState
     wallJumpingState.onLand = readyState
@@ -272,7 +289,6 @@ function control.player(player, map, keys)
         return false
     end
 
-    local airborne = true
 
     local x_velocity = 0
     local y_velocity = 0
@@ -294,6 +310,8 @@ function control.player(player, map, keys)
 
         debug_data.state = state.name
         debug_data.airborne = airborne
+
+        debug_data.dash_credit = dash_credit
 
         local events = {}
 
@@ -352,9 +370,12 @@ function control.player(player, map, keys)
             shooting_timer = shooting_duration
         end
 
-        local afterDash = state.onDash
-        if was_pressed(keys.dash) and afterDash ~= nil then
-            setState(afterDash)
+
+        if was_pressed(keys.dash) then
+            local afterDash = state.onDash()
+            if afterDash ~= nil then
+                setState(afterDash)
+            end
         end
 
         local moving = false
@@ -474,6 +495,7 @@ function control.player(player, map, keys)
         if (colliding) then
 
             if details.bottom then
+                dash_credit = 1
 
                 -- corner case : when running on the edge of a block towards the block, we can stay in levitation while running
                 -- in this case, consider collision on bottom only
@@ -485,6 +507,7 @@ function control.player(player, map, keys)
             end
 
             if (details.left or details.right) then
+                dash_credit = 1
                 if (details.left) then
                     player.x = (details.left.x + details.left.dx + 1)
                     if airborne and love.keyboard.isDown(keys.left) then
