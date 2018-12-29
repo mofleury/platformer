@@ -22,6 +22,8 @@ local mini = nil
 
 local bulletSpriteSheet
 
+local drawSlashes = false
+
 debug_data = {}
 
 local function create_player(map, x, y, keys)
@@ -144,7 +146,7 @@ end
 local function newSlash(playerSlashEvent)
     local source = playerSlashEvent.from
 
-    local slash = { x = source.x, y = source.y, dx = 10, dy = 10, orientation = source.orientation }
+    local slash = { x = source.x, y = source.y, dx = 0, dy = 0 }
 
     local c = control.slash(slash, source)
 
@@ -286,9 +288,12 @@ function love.draw()
     for i, a in pairs(debug_data.colliding) do
         drawBox(a)
     end
-    --    for i, a in pairs(slashes) do
-    --        drawBox(i)
-    --    end
+
+    if drawSlashes then
+        for i, a in pairs(slashes) do
+            drawBox(i)
+        end
+    end
 
     mini.draw()
 

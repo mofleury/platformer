@@ -308,10 +308,10 @@ function control.player(player, map, keys)
 
     function controller.update(dt)
 
-        debug_data.state = state.name
-        debug_data.airborne = airborne
+        --debug_data.state = state.name
+        --debug_data.airborne = airborne
 
-        debug_data.dash_credit = dash_credit
+        --debug_data.dash_credit = dash_credit
 
         local events = {}
 
@@ -618,50 +618,31 @@ function control.bullet(bullet, map, screen)
     return controller
 end
 
-
-local slashBoxes = {
-    { x = -5, y = 8, dx = 2, dy = 2 },
-    { x = -5, y = 8, dx = 2, dy = 2 },
-    { x = -15, y = 8, dx = 23, dy = 20 },
-    { x = -15, y = 3, dx = 24, dy = 31 },
-    { x = -5, y = 28, dx = 55, dy = 40 },
-    { x = 35, y = 3, dx = 40, dy = 49 },
-    { x = 35, y = 3, dx = 40, dy = 49 },
-    { x = 35, y = 3, dx = 40, dy = 49 },
-    { x = 35, y = 3, dx = 40, dy = 9 },
-    { x = 35, y = 3, dx = 40, dy = 9 },
-    { x = 35, y = 3, dx = 5, dy = 5 },
-    { x = 35, y = 3, dx = 5, dy = 5 },
-}
-
 function control.slash(slash, player)
 
     local controller = {}
 
-    local duration = 0
-    local slash_total_duration = 0.7
-
-    local initX = player.x
-    local initY = player.y
+    local started = false
 
     function controller.update(dt)
 
-        duration = duration + dt
-
         local events = {}
 
-        local slashBox = slashBoxes[math.min(math.floor(duration / 0.05) + 1, table.getn(slashBoxes))]
+        local slashBox = player.frame.attackbox
 
-        if slash.orientation == 1 then
-            slash.x = initX + slashBox.x
-        else
-            slash.x = initX - slashBox.x - slashBox.dx + player.dx
-        end
-        slash.y = initY + slashBox.y
-        slash.dx = slashBox.dx
-        slash.dy = slashBox.dy
+        if slashBox ~= nil then
+            started = true
 
-        if duration > slash_total_duration or player.x ~= initX or player.y ~= initY then
+            if player.orientation == 1 then
+                slash.x = player.x + player.dx / 2 - player.frame.anchor.x + slashBox.x
+            else
+                slash.x = player.x + player.dx / 2 + player.frame.anchor.x - slashBox.x - slashBox.w
+            end
+            slash.y = player.y - player.frame.anchor.y + slashBox.y
+            slash.dx = slashBox.w
+            slash.dy = slashBox.h
+
+        elseif started == true then
             events.slashComplete = { from = slash }
         end
 

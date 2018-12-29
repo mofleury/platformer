@@ -53,6 +53,8 @@ function animation.animator(spritesheet, object, screen)
             0,
             xScale,
             1)
+
+        object.frame = frame
     end
 
     function animator.update(dt)

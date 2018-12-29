@@ -1,26 +1,6 @@
 {
-  "slashing/frame0003.png": {
-    "filename": "slashing/frame0003.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
-    },
-    "attackbox": {
-      "x": 31,
-      "y": 14,
-      "w": 23,
-      "h": 31
-    }
-  },
-  "dashing/frame0001.png": {
-    "filename": "dashing/frame0001.png",
-    "anchor": {
-      "x": 40,
-      "y": 8
-    }
-  },
-  "slashing/frame0011.png": {
-    "filename": "slashing/frame0011.png",
+  "jumping-slashing/frame0001.png": {
+    "filename": "jumping-slashing/frame0001.png",
     "anchor": {
       "x": 61,
       "y": 9
@@ -39,6 +19,19 @@
       "h": 8
     }
   },
+  "jumping-slashing/frame0005.png": {
+    "filename": "jumping-slashing/frame0005.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 86,
+      "y": 13,
+      "w": 37,
+      "h": 48
+    }
+  },
   "slashing/frame0000.png": {
     "filename": "slashing/frame0000.png",
     "anchor": {
@@ -51,6 +44,153 @@
     "anchor": {
       "x": 36,
       "y": 8
+    }
+  },
+  "slashing/frame0002.png": {
+    "filename": "slashing/frame0002.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 28,
+      "y": 30,
+      "w": 23,
+      "h": 20
+    }
+  },
+  "dashing/frame0000.png": {
+    "filename": "dashing/frame0000.png",
+    "anchor": {
+      "x": 40,
+      "y": 8
+    }
+  },
+  "slashing/frame0012.png": {
+    "filename": "slashing/frame0012.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "dashing/frame0004.png": {
+    "filename": "dashing/frame0004.png",
+    "anchor": {
+      "x": 37,
+      "y": 8
+    }
+  },
+  "jumping-slashing/frame0000.png": {
+    "filename": "jumping-slashing/frame0000.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "jumping-slashing/frame0004.png": {
+    "filename": "jumping-slashing/frame0004.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 51,
+      "y": 37,
+      "w": 54,
+      "h": 40
+    }
+  },
+  "slashing/frame0007.png": {
+    "filename": "slashing/frame0007.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 85,
+      "y": 12,
+      "w": 38,
+      "h": 8
+    }
+  },
+  "slashing/frame0003.png": {
+    "filename": "slashing/frame0003.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 31,
+      "y": 14,
+      "w": 23,
+      "h": 31
+    }
+  },
+  "jumping-slashing/frame0008.png": {
+    "filename": "jumping-slashing/frame0008.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 85,
+      "y": 12,
+      "w": 26,
+      "h": 8
+    }
+  },
+  "dashing/frame0001.png": {
+    "filename": "dashing/frame0001.png",
+    "anchor": {
+      "x": 40,
+      "y": 8
+    }
+  },
+  "jumping-slashing/frame0003.png": {
+    "filename": "jumping-slashing/frame0003.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 31,
+      "y": 14,
+      "w": 23,
+      "h": 31
+    }
+  },
+  "slashing/frame0011.png": {
+    "filename": "slashing/frame0011.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "jumping-slashing/frame0011.png": {
+    "filename": "jumping-slashing/frame0011.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "jumping-slashing/frame0012.png": {
+    "filename": "jumping-slashing/frame0012.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "jumping-slashing/frame0009.png": {
+    "filename": "jumping-slashing/frame0009.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 85,
+      "y": 12,
+      "w": 12,
+      "h": 8
     }
   },
   "dashing/frame0005.png": {
@@ -70,6 +210,19 @@
       "x": 85,
       "y": 12,
       "w": 26,
+      "h": 8
+    }
+  },
+  "jumping-slashing/frame0007.png": {
+    "filename": "jumping-slashing/frame0007.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 85,
+      "y": 12,
+      "w": 38,
       "h": 8
     }
   },
@@ -113,8 +266,8 @@
       "y": 8
     }
   },
-  "slashing/frame0002.png": {
-    "filename": "slashing/frame0002.png",
+  "jumping-slashing/frame0002.png": {
+    "filename": "jumping-slashing/frame0002.png",
     "anchor": {
       "x": 61,
       "y": 9
@@ -126,25 +279,11 @@
       "h": 20
     }
   },
-  "dashing/frame0000.png": {
-    "filename": "dashing/frame0000.png",
-    "anchor": {
-      "x": 40,
-      "y": 8
-    }
-  },
-  "slashing/frame0012.png": {
-    "filename": "slashing/frame0012.png",
+  "jumping-slashing/frame0010.png": {
+    "filename": "jumping-slashing/frame0010.png",
     "anchor": {
       "x": 61,
       "y": 9
-    }
-  },
-  "dashing/frame0004.png": {
-    "filename": "dashing/frame0004.png",
-    "anchor": {
-      "x": 37,
-      "y": 8
     }
   },
   "slashing/frame0001.png": {
@@ -174,8 +313,8 @@
       "y": 8
     }
   },
-  "slashing/frame0007.png": {
-    "filename": "slashing/frame0007.png",
+  "jumping-slashing/frame0006.png": {
+    "filename": "jumping-slashing/frame0006.png",
     "anchor": {
       "x": 61,
       "y": 9
