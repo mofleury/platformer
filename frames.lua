@@ -33,8 +33,12 @@ function frames.generator(imageFile, jsonFile, complementaryJsonFile)
         local anchor = {}
         local attackbox
         if complement ~= nil then
-            anchor = complement.anchor
-            attackbox = complement.attackbox
+            if complement.anchor ~= nil then
+                anchor = complement.anchor
+            end
+            if complement.attackbox ~= nil then
+                attackbox = complement.attackbox
+            end
         end
 
         if anchor.x == nil then

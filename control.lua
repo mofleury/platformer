@@ -584,12 +584,41 @@ function control.blob(blob, player, map)
     return controller
 end
 
-function control.bullet(bullet, map, screen)
+local function actionOrigin(object)
+    local attackbox = object.frame.attackbox
 
+    local x, y = object.x, object.y + object.dy / 2
+
+    if attackbox ~= nil then
+
+        if object.orientation == 1 then
+            x = object.x + object.dx / 2 - object.frame.anchor.x + attackbox.x
+        else
+            x = object.x + object.dx / 2 + object.frame.anchor.x - attackbox.x - attackbox.w
+        end
+        y = object.y - object.frame.anchor.y + attackbox.y
+    end
+    return x, y
+end
+
+function control.bullet(bullet, playerShotEvent, map, screen)
+
+    local player = playerShotEvent.from
     local controller = {}
 
     local speed = 10
     local margin = 100
+
+    local frame = player.frame
+
+    local ox, oy = actionOrigin(player)
+    bullet.x = ox - 2
+    bullet.y = oy
+    bullet.dx = 8
+    bullet.dy = 8
+    bullet.orientation = playerShotEvent.orientation
+    bullet.state = "idle"
+
 
     function controller.update(dt)
 
@@ -633,12 +662,8 @@ function control.slash(slash, player)
         if slashBox ~= nil then
             started = true
 
-            if player.orientation == 1 then
-                slash.x = player.x + player.dx / 2 - player.frame.anchor.x + slashBox.x
-            else
-                slash.x = player.x + player.dx / 2 + player.frame.anchor.x - slashBox.x - slashBox.w
-            end
-            slash.y = player.y - player.frame.anchor.y + slashBox.y
+            slash.x, slash.y = actionOrigin(player)
+
             slash.dx = slashBox.w
             slash.dy = slashBox.h
 

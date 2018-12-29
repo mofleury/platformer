@@ -1,24 +1,4 @@
 {
-  "jumping-slashing/frame0001.png": {
-    "filename": "jumping-slashing/frame0001.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
-    }
-  },
-  "slashing/frame0006.png": {
-    "filename": "slashing/frame0006.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
-    },
-    "attackbox": {
-      "x": 85,
-      "y": 12,
-      "w": 38,
-      "h": 8
-    }
-  },
   "jumping-slashing/frame0005.png": {
     "filename": "jumping-slashing/frame0005.png",
     "anchor": {
@@ -39,11 +19,44 @@
       "y": 9
     }
   },
-  "dashing/frame0003.png": {
-    "filename": "dashing/frame0003.png",
+  "dashing-shooting/frame0001.png": {
+    "filename": "dashing-shooting/frame0001.png",
     "anchor": {
-      "x": 36,
+      "x": 40,
       "y": 8
+    },
+    "attackbox": {
+      "x": 68,
+      "y": 28,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "wall-jumping-shooting/frame0001.png": {
+    "filename": "wall-jumping-shooting/frame0001.png",
+    "attackbox": {
+      "x": 42,
+      "y": 32,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "running-shooting/frame0000.png": {
+    "filename": "running-shooting/frame0000.png",
+    "attackbox": {
+      "x": 53,
+      "y": 21,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "jumping-shooting/frame0004.png": {
+    "filename": "jumping-shooting/frame0004.png",
+    "attackbox": {
+      "x": 46,
+      "y": 32,
+      "w": 1,
+      "h": 1
     }
   },
   "slashing/frame0002.png": {
@@ -66,25 +79,31 @@
       "y": 8
     }
   },
-  "slashing/frame0012.png": {
-    "filename": "slashing/frame0012.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
+  "running-shooting/frame0009.png": {
+    "filename": "running-shooting/frame0009.png",
+    "attackbox": {
+      "x": 52,
+      "y": 20,
+      "w": 1,
+      "h": 1
     }
   },
-  "dashing/frame0004.png": {
-    "filename": "dashing/frame0004.png",
-    "anchor": {
-      "x": 37,
-      "y": 8
+  "running-shooting/frame0001.png": {
+    "filename": "running-shooting/frame0001.png",
+    "attackbox": {
+      "x": 53,
+      "y": 21,
+      "w": 1,
+      "h": 1
     }
   },
-  "jumping-slashing/frame0000.png": {
-    "filename": "jumping-slashing/frame0000.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
+  "wall-jumping-shooting/frame0000.png": {
+    "filename": "wall-jumping-shooting/frame0000.png",
+    "attackbox": {
+      "x": 42,
+      "y": 34,
+      "w": 1,
+      "h": 1
     }
   },
   "jumping-slashing/frame0004.png": {
@@ -100,30 +119,30 @@
       "h": 40
     }
   },
-  "slashing/frame0007.png": {
-    "filename": "slashing/frame0007.png",
+  "dashing-shooting/frame0000.png": {
+    "filename": "dashing-shooting/frame0000.png",
     "anchor": {
-      "x": 61,
-      "y": 9
+      "x": 40,
+      "y": 8
     },
     "attackbox": {
-      "x": 85,
-      "y": 12,
-      "w": 38,
-      "h": 8
+      "x": 64,
+      "y": 31,
+      "w": 1,
+      "h": 1
     }
   },
-  "slashing/frame0003.png": {
-    "filename": "slashing/frame0003.png",
+  "dashing-shooting/frame0004.png": {
+    "filename": "dashing-shooting/frame0004.png",
     "anchor": {
-      "x": 61,
-      "y": 9
+      "x": 40,
+      "y": 8
     },
     "attackbox": {
-      "x": 31,
-      "y": 14,
-      "w": 23,
-      "h": 31
+      "x": 72,
+      "y": 19,
+      "w": 5,
+      "h": 1
     }
   },
   "jumping-slashing/frame0008.png": {
@@ -139,31 +158,22 @@
       "h": 8
     }
   },
-  "dashing/frame0001.png": {
-    "filename": "dashing/frame0001.png",
-    "anchor": {
-      "x": 40,
-      "y": 8
-    }
-  },
-  "jumping-slashing/frame0003.png": {
-    "filename": "jumping-slashing/frame0003.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
-    },
+  "running-shooting/frame0003.png": {
+    "filename": "running-shooting/frame0003.png",
     "attackbox": {
-      "x": 31,
-      "y": 14,
-      "w": 23,
-      "h": 31
+      "x": 52,
+      "y": 19,
+      "w": 1,
+      "h": 1
     }
   },
-  "slashing/frame0011.png": {
-    "filename": "slashing/frame0011.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
+  "jumping-shooting/frame0003.png": {
+    "filename": "jumping-shooting/frame0003.png",
+    "attackbox": {
+      "x": 48,
+      "y": 31,
+      "w": 1,
+      "h": 1
     }
   },
   "jumping-slashing/frame0011.png": {
@@ -180,23 +190,28 @@
       "y": 9
     }
   },
-  "jumping-slashing/frame0009.png": {
-    "filename": "jumping-slashing/frame0009.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
-    },
+  "wall-sliding-shooting/frame0000.png": {
+    "filename": "wall-sliding-shooting/frame0000.png",
     "attackbox": {
-      "x": 85,
-      "y": 12,
-      "w": 12,
-      "h": 8
+      "x": 2,
+      "y": 24,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "running-shooting/frame0002.png": {
+    "filename": "running-shooting/frame0002.png",
+    "attackbox": {
+      "x": 54,
+      "y": 20,
+      "w": 1,
+      "h": 1
     }
   },
   "dashing/frame0005.png": {
     "filename": "dashing/frame0005.png",
     "anchor": {
-      "x": 40,
+      "x": 36,
       "y": 8
     }
   },
@@ -226,13 +241,6 @@
       "h": 8
     }
   },
-  "slashing/frame0010.png": {
-    "filename": "slashing/frame0010.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
-    }
-  },
   "slashing/frame0009.png": {
     "filename": "slashing/frame0009.png",
     "anchor": {
@@ -246,37 +254,26 @@
       "h": 8
     }
   },
-  "slashing/frame0004.png": {
-    "filename": "slashing/frame0004.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
-    },
+  "running-shooting/frame0004.png": {
+    "filename": "running-shooting/frame0004.png",
     "attackbox": {
       "x": 51,
-      "y": 37,
-      "w": 54,
-      "h": 40
+      "y": 20,
+      "w": 1,
+      "h": 1
     }
   },
-  "dashing/frame0002.png": {
-    "filename": "dashing/frame0002.png",
+  "dashing-shooting/frame0003.png": {
+    "filename": "dashing-shooting/frame0003.png",
     "anchor": {
-      "x": 37,
+      "x": 36,
       "y": 8
-    }
-  },
-  "jumping-slashing/frame0002.png": {
-    "filename": "jumping-slashing/frame0002.png",
-    "anchor": {
-      "x": 61,
-      "y": 9
     },
     "attackbox": {
-      "x": 28,
-      "y": 30,
-      "w": 23,
-      "h": 20
+      "x": 76,
+      "y": 19,
+      "w": 1,
+      "h": 1
     }
   },
   "jumping-slashing/frame0010.png": {
@@ -293,17 +290,35 @@
       "y": 9
     }
   },
-  "slashing/frame0005.png": {
-    "filename": "slashing/frame0005.png",
+  "jumping-shooting/frame0002.png": {
+    "filename": "jumping-shooting/frame0002.png",
+    "attackbox": {
+      "x": 48,
+      "y": 31,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "dashing-shooting/frame0002.png": {
+    "filename": "dashing-shooting/frame0002.png",
     "anchor": {
-      "x": 61,
-      "y": 9
+      "x": 37,
+      "y": 8
     },
     "attackbox": {
-      "x": 86,
-      "y": 13,
-      "w": 37,
-      "h": 48
+      "x": 68,
+      "y": 28,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "landing-shooting/frame0008.png": {
+    "filename": "landing-shooting/frame0008.png",
+    "attackbox": {
+      "x": 51,
+      "y": 20,
+      "w": 1,
+      "h": 1
     }
   },
   "dashing/frame0006.png": {
@@ -324,6 +339,316 @@
       "y": 12,
       "w": 38,
       "h": 8
+    }
+  },
+  "idle-shooting/frame0000.png": {
+    "filename": "idle-shooting/frame0000.png",
+    "attackbox": {
+      "x": 55,
+      "y": 22,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "running-shooting/frame0005.png": {
+    "filename": "running-shooting/frame0005.png",
+    "attackbox": {
+      "x": 52,
+      "y": 21,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "jumping-slashing/frame0001.png": {
+    "filename": "jumping-slashing/frame0001.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "jumping-shooting/frame0000.png": {
+    "filename": "jumping-shooting/frame0000.png",
+    "attackbox": {
+      "x": 48,
+      "y": 32,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "dashing-shooting/frame0006.png": {
+    "filename": "dashing-shooting/frame0006.png",
+    "anchor": {
+      "x": 39,
+      "y": 8
+    },
+    "attackbox": {
+      "x": 76,
+      "y": 19,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "slashing/frame0006.png": {
+    "filename": "slashing/frame0006.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 85,
+      "y": 12,
+      "w": 38,
+      "h": 8
+    }
+  },
+  "running-shooting/frame0006.png": {
+    "filename": "running-shooting/frame0006.png",
+    "attackbox": {
+      "x": 51,
+      "y": 21,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "jumping-shooting/frame0001.png": {
+    "filename": "jumping-shooting/frame0001.png",
+    "attackbox": {
+      "x": 48,
+      "y": 32,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "landing-shooting/frame0007.png": {
+    "filename": "landing-shooting/frame0007.png",
+    "attackbox": {
+      "x": 50,
+      "y": 31,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "dashing/frame0003.png": {
+    "filename": "dashing/frame0003.png",
+    "anchor": {
+      "x": 36,
+      "y": 8
+    }
+  },
+  "dashing-shooting/frame0005.png": {
+    "filename": "dashing-shooting/frame0005.png",
+    "anchor": {
+      "x": 36,
+      "y": 8
+    },
+    "attackbox": {
+      "x": 76,
+      "y": 19,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "slashing/frame0012.png": {
+    "filename": "slashing/frame0012.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "dashing/frame0004.png": {
+    "filename": "dashing/frame0004.png",
+    "anchor": {
+      "x": 37,
+      "y": 8
+    }
+  },
+  "jumping-slashing/frame0000.png": {
+    "filename": "jumping-slashing/frame0000.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "slashing/frame0007.png": {
+    "filename": "slashing/frame0007.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 85,
+      "y": 12,
+      "w": 38,
+      "h": 8
+    }
+  },
+  "slashing/frame0003.png": {
+    "filename": "slashing/frame0003.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 31,
+      "y": 14,
+      "w": 23,
+      "h": 31
+    }
+  },
+  "dashing/frame0001.png": {
+    "filename": "dashing/frame0001.png",
+    "anchor": {
+      "x": 40,
+      "y": 8
+    }
+  },
+  "jumping-slashing/frame0003.png": {
+    "filename": "jumping-slashing/frame0003.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 31,
+      "y": 14,
+      "w": 23,
+      "h": 31
+    }
+  },
+  "slashing/frame0011.png": {
+    "filename": "slashing/frame0011.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "running-shooting/frame0008.png": {
+    "filename": "running-shooting/frame0008.png",
+    "attackbox": {
+      "x": 52,
+      "y": 19,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "idle-shooting/frame0003.png": {
+    "filename": "idle-shooting/frame0003.png",
+    "attackbox": {
+      "x": 53,
+      "y": 22,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "idle-shooting/frame0002.png": {
+    "filename": "idle-shooting/frame0002.png",
+    "attackbox": {
+      "x": 53,
+      "y": 22,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "jumping-slashing/frame0009.png": {
+    "filename": "jumping-slashing/frame0009.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 85,
+      "y": 12,
+      "w": 12,
+      "h": 8
+    }
+  },
+  "slashing/frame0010.png": {
+    "filename": "slashing/frame0010.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    }
+  },
+  "slashing/frame0004.png": {
+    "filename": "slashing/frame0004.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 51,
+      "y": 37,
+      "w": 54,
+      "h": 40
+    }
+  },
+  "dashing/frame0002.png": {
+    "filename": "dashing/frame0002.png",
+    "anchor": {
+      "x": 40,
+      "y": 8
+    }
+  },
+  "jumping-slashing/frame0002.png": {
+    "filename": "jumping-slashing/frame0002.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 28,
+      "y": 30,
+      "w": 23,
+      "h": 20
+    }
+  },
+  "idle-shooting/frame0001.png": {
+    "filename": "idle-shooting/frame0001.png",
+    "attackbox": {
+      "x": 55,
+      "y": 22,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "falling-shooting/frame0005.png": {
+    "filename": "falling-shooting/frame0005.png",
+    "attackbox": {
+      "x": 48,
+      "y": 33,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "falling-shooting/frame0006.png": {
+    "filename": "falling-shooting/frame0006.png",
+    "attackbox": {
+      "x": 48,
+      "y": 33,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "running-shooting/frame0007.png": {
+    "filename": "running-shooting/frame0007.png",
+    "attackbox": {
+      "x": 52,
+      "y": 21,
+      "w": 1,
+      "h": 1
+    }
+  },
+  "slashing/frame0005.png": {
+    "filename": "slashing/frame0005.png",
+    "anchor": {
+      "x": 61,
+      "y": 9
+    },
+    "attackbox": {
+      "x": 86,
+      "y": 13,
+      "w": 37,
+      "h": 48
     }
   }
 }

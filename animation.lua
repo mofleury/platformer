@@ -11,6 +11,7 @@ function animation.animator(spritesheet, object, screen)
     local previous_state = object.state
     local time_elapsed = 0
 
+
     local function currentAnimation()
 
         local animations = spritesheet.animations[object.state];
@@ -30,7 +31,10 @@ function animation.animator(spritesheet, object, screen)
 
     function animator.draw()
 
-        local frame = currentAnimation()[index + 1]
+        local frame = object.frame
+        if frame == nil then
+            frame = currentAnimation()[index + 1]
+        end
 
         local xCenter = object.x + object.dx / 2
 
@@ -86,6 +90,8 @@ function animation.animator(spritesheet, object, screen)
 
             time_elapsed = 0
         end
+
+        object.frame = currentAnimation()[index + 1]
     end
 
     return animator

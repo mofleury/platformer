@@ -118,21 +118,10 @@ end
 
 
 local function newBullet(playerShotEvent)
-    local source = playerShotEvent.from
 
-    local frame = animators[source].currentFrame()
+    local bullet = {}
 
-    local xb
-    if playerShotEvent.orientation == 1 then
-        xb = source.x + frame.dx / 2 + 10
-    else
-        xb = source.x + source.dx - frame.dx / 2 - 10
-    end
-    local yb = source.y + frame.dy / 2 - 5
-
-    local bullet = { x = xb, y = yb, dx = 10, dy = 10, orientation = playerShotEvent.orientation, state = "idle" }
-
-    local c = control.bullet(bullet, map, screen)
+    local c = control.bullet(bullet, playerShotEvent, map, screen)
 
     controllers[bullet] = c
 
