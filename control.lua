@@ -570,15 +570,25 @@ function control.player(player, map, keys)
     return controller
 end
 
-function control.blob(blob, player, map)
+function control.walker(walker, player, map)
 
     local controller = {}
 
     local speed = 1
 
+    walker.state = "walking"
+
+    walker.x = player.x + 500
+    walker.y = player.y
+    walker.dx = 22 walker.dy = 26
+
     function controller.update(dt)
 
-        blob.x = blob.x + speed * sign(player.x - blob.x)
+        local orientation = sign(player.x - walker.x)
+
+        walker.orientation = orientation
+
+        walker.x = walker.x + speed * orientation
     end
 
     return controller

@@ -68,13 +68,13 @@ local function sleepIfPossible(dt)
 end
 
 local function createMob()
-    local mob = { x = 100, y = 100, dx = 22, dy = 26, orientation = 1, state = "idle" }
+    local mob = {}
     mobs[mob] = true
 
-    local mobAnimator = animation.animator(dofile("resources/characters/blob.lua"), mob, screen)
+    local mobAnimator = animation.animator(dofile("resources/characters/walker.lua"), mob, screen)
     animators[mob] = mobAnimator
 
-    local mobController = control.blob(mob, players[1], map)
+    local mobController = control.walker(mob, players[1], map)
     controllers[mob] = mobController
 end
 
