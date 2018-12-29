@@ -30,14 +30,12 @@ function animation.animator(spritesheet, object, screen)
 
     function animator.draw()
 
-
         local frame = currentAnimation()[index + 1]
-
 
         local xCenter = object.x + object.dx / 2
 
-        local xDraw = xCenter - frame.ax
-        local yDraw = object.y + frame.dy + frame.ay
+        local xDraw = xCenter - frame.anchor.x
+        local yDraw = object.y + frame.dy - frame.anchor.y
 
         local xScale
         if (object.orientation == 1) then

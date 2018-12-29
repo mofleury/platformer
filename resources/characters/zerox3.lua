@@ -1,6 +1,8 @@
 local frames = require "frames"
 
-local generator = frames.generator("resources/characters/atlas/zero.png", "resources/characters/atlas/zero.json")
+local generator = frames.generator("resources/characters/atlas/zero.png",
+    "resources/characters/atlas/zero.json",
+    "resources/characters/atlas/zero-actions.json")
 
 local animations = {
     idle = generator.resolveAnimation("idle", 0.1, { shooting = "idle_shooting" }),

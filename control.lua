@@ -70,7 +70,7 @@ function control.player(player, map, keys)
     local running_speed = 200
     local dashing_speed = 450
 
-    local dashing_duration = 0.25
+    local dashing_duration = 0.35
     local shooting_duration = 0.25
     local slashing_duration = 0.7
     local slashin_freeze = 0.5
