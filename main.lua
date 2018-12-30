@@ -183,6 +183,8 @@ function love.update(dt)
 
     local allEvents = {}
 
+    debug_data.colliding = {}
+
     for i, c in pairs(controllers) do
         local events = c.update(dt)
         if events ~= nil then

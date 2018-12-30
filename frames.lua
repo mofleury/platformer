@@ -2,12 +2,12 @@ local JSON = require "JSON"
 
 local frames = {}
 
-function frames.timeBasedNextFrameCondition(frame_duration)
+function frames.timeBasedNextFrameCondition(frameDuration)
     return function(time_elapsed, drawAnchor, object)
         drawAnchor.x = object.x
         drawAnchor.y = object.y
 
-        return time_elapsed > frame_duration
+        return time_elapsed > frameDuration
     end
 end
 
@@ -17,11 +17,12 @@ function frames.gapBasedNextFrameCondition(gap)
             return true
         end
 
+        drawAnchor.y = object.y
+
         local shouldSwitch = math.abs(drawAnchor.x - object.x) >= gap
 
         if shouldSwitch then
             drawAnchor.x = object.x
-            drawAnchor.y = object.y
         end
 
         return shouldSwitch
@@ -102,7 +103,6 @@ function frames.generator(imageFile, jsonFile, complementaryJsonFile)
                 table.insert(animation, frame)
             end
         end
-        animation.frame_duration = duration
         animation.alternates = alternatives
         animation.next = next
 
