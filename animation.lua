@@ -1,7 +1,5 @@
 local animation = {}
 
-local animation_slowdown_factor = 1
-
 function animation.animator(spritesheet, object, screen)
 
     local animator = {}
@@ -11,6 +9,7 @@ function animation.animator(spritesheet, object, screen)
     local previous_state = object.state
     local time_elapsed = 0
 
+    local drawAnchor = { x = 0, y = 0 }
 
     local function currentAnimation()
 
@@ -34,14 +33,15 @@ function animation.animator(spritesheet, object, screen)
         local frame = object.frame
         if frame == nil then
             frame = currentAnimation()[index + 1]
+            object.frame = frame
         end
 
-        local xCenter = object.x + object.dx / 2
+        local xCenter = drawAnchor.x + object.dx / 2
 
         local xDraw = xCenter - frame.anchor.x
-        local yDraw = object.y + frame.dy - frame.anchor.y
-
+        local yDraw = drawAnchor.y + frame.dy - frame.anchor.y
         local xScale
+
         if (object.orientation == 1) then
             xScale = 1
         else
@@ -51,14 +51,12 @@ function animation.animator(spritesheet, object, screen)
 
         love.graphics.draw(spritesheet.image, --The image
             --Current frame of the current animation
-            frame.q,
+            object.frame.q,
             xDraw - screen.x,
             screen.y + screen.dy - yDraw,
             0,
             xScale,
             1)
-
-        object.frame = frame
     end
 
     function animator.update(dt)
@@ -77,8 +75,12 @@ function animation.animator(spritesheet, object, screen)
         local anim = currentAnimation()
         local nonAlternateAnim = spritesheet.animations[object.state]
 
+        local nextFrameCondition = anim.nextFrameCondition
+
         time_elapsed = time_elapsed + dt
-        if time_elapsed > anim.frame_duration * animation_slowdown_factor then
+        if nextFrameCondition(time_elapsed, drawAnchor, object) then
+
+
             index = (index + 1) % table.getn(anim)
 
             if index == 0 then

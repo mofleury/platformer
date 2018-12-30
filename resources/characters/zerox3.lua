@@ -8,7 +8,7 @@ local animations = {
     idle = generator.resolveAnimation("idle", 0.1, { shooting = "idle_shooting" }),
     idle_shooting = generator.resolveAnimation("idle-shooting", 0.1),
     running = generator.resolveAnimation("running", 0.05, { shooting = "running_shooting" }),
-    running_shooting = generator.resolveAnimation("running-shooting", 0.05),
+    running_shooting = generator.resolveAnimation("running-shooting", 0.05, nil),
     jumping = generator.resolveAnimation("jumping", 0.05, { shooting = "jumping_shooting" }),
     jumping_shooting = generator.resolveAnimation("jumping-shooting", 0.05),
     falling = generator.resolveAnimation("falling", 0.05, { shooting = "falling_shooting" }),

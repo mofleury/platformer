@@ -6,7 +6,7 @@ local generator = frames.generator("resources/characters/atlas/walker.png",
 
 local animations = {
     idle = generator.resolveAnimation("idle", 0.1),
-    walking = generator.resolveAnimation("walking", 0.15)
+    walking = generator.resolveAnimation("walking", 0.15, nil, nil, frames.gapBasedNextFrameCondition(7))
 }
 
 

@@ -2,6 +2,32 @@ local JSON = require "JSON"
 
 local frames = {}
 
+function frames.timeBasedNextFrameCondition(frame_duration)
+    return function(time_elapsed, drawAnchor, object)
+        drawAnchor.x = object.x
+        drawAnchor.y = object.y
+
+        return time_elapsed > frame_duration
+    end
+end
+
+function frames.gapBasedNextFrameCondition(gap)
+    return function(time_elapsed, drawAnchor, object)
+        if drawAnchor.x == nil or object.x == nil then
+            return true
+        end
+
+        local shouldSwitch = math.abs(drawAnchor.x - object.x) >= gap
+
+        if shouldSwitch then
+            drawAnchor.x = object.x
+            drawAnchor.y = object.y
+        end
+
+        return shouldSwitch
+    end
+end
+
 function frames.generator(imageFile, jsonFile, complementaryJsonFile)
 
     local jsonSpriteSheet
@@ -63,8 +89,9 @@ function frames.generator(imageFile, jsonFile, complementaryJsonFile)
         return str:sub(1, #start) == start
     end
 
-    local function resolveAnimation(name, duration, alternatives, next)
+    local function resolveAnimation(name, duration, alternatives, next, nextFrameCondition)
         local animation = {}
+
         for i, f in ipairs(jsonSpriteSheet.frames) do
             if (startsWith(f.filename, name .. "/")) then
                 local complement
@@ -78,6 +105,11 @@ function frames.generator(imageFile, jsonFile, complementaryJsonFile)
         animation.frame_duration = duration
         animation.alternates = alternatives
         animation.next = next
+
+        if nextFrameCondition == nil then
+            nextFrameCondition = frames.timeBasedNextFrameCondition(duration)
+        end
+        animation.nextFrameCondition = nextFrameCondition
 
         return animation
     end
