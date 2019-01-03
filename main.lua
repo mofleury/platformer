@@ -71,11 +71,12 @@ local function createMob()
     local mob = {}
     mobs[mob] = true
 
-    local mobAnimator = animation.animator(dofile("resources/characters/walker.lua"), mob, screen)
+    local mobAnimator = animation.animator(dofile("resources/characters/rabbit.lua"), mob, screen)
     animators[mob] = mobAnimator
 
-    local mobController = control.walker(mob, players[1], map)
+    local mobController = control.rabbit(mob, players[1], map)
     controllers[mob] = mobController
+
 end
 
 

@@ -14,6 +14,9 @@ function animation.animator(spritesheet, object, screen)
     local function currentAnimation()
 
         local animations = spritesheet.animations[object.state];
+        if animations == nil then
+            println(object.state)
+        end
         if animations.alternates ~= nil then
             for n, a in pairs(animations.alternates) do
                 if object.subState[n] == true then

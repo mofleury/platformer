@@ -1,0 +1,100 @@
+{"frames": [
+
+{
+	"filename": "aiming/frame0001.png",
+	"frame": {"x":0,"y":78,"w":33,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":33,"h":32},
+	"sourceSize": {"w":33,"h":32}
+},
+{
+	"filename": "bullet/slice_1_6.png",
+	"frame": {"x":0,"y":0,"w":10,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":10,"h":8},
+	"sourceSize": {"w":10,"h":8}
+},
+{
+	"filename": "bullet/slice_1_7.png",
+	"frame": {"x":10,"y":0,"w":16,"h":12},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":12},
+	"sourceSize": {"w":16,"h":12}
+},
+{
+	"filename": "falling/frame0002.png",
+	"frame": {"x":0,"y":39,"w":32,"h":39},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":39},
+	"sourceSize": {"w":32,"h":39}
+},
+{
+	"filename": "idle/frame0000.png",
+	"frame": {"x":33,"y":78,"w":33,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":33,"h":32},
+	"sourceSize": {"w":33,"h":32}
+},
+{
+	"filename": "jumping/frame0000.png",
+	"frame": {"x":32,"y":39,"w":32,"h":39},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":39},
+	"sourceSize": {"w":32,"h":39}
+},
+{
+	"filename": "jumping/frame0001.png",
+	"frame": {"x":26,"y":0,"w":32,"h":39},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":39},
+	"sourceSize": {"w":32,"h":39}
+},
+{
+	"filename": "jumping/frame0002.png",
+	"frame": {"x":64,"y":39,"w":32,"h":39},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":39},
+	"sourceSize": {"w":32,"h":39}
+},
+{
+	"filename": "landing/frame0003.png",
+	"frame": {"x":58,"y":0,"w":32,"h":39},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":39},
+	"sourceSize": {"w":32,"h":39}
+},
+{
+	"filename": "landing/frame0004.png",
+	"frame": {"x":90,"y":0,"w":32,"h":39},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":39},
+	"sourceSize": {"w":32,"h":39}
+},
+{
+	"filename": "shooting/frame0002.png",
+	"frame": {"x":66,"y":78,"w":33,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":33,"h":32},
+	"sourceSize": {"w":33,"h":32}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "rabbit.png",
+	"format": "RGBA8888",
+	"size": {"w":122,"h":110},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:117b0aa7e386b6be317b54666da41c01:9a81eb43420ba8f75bcfc6c908f3fda3:728f3986df73c95a11c23983e61158cd$"
+}
+}
