@@ -2,11 +2,20 @@ local control = require("control")
 
 local brain = {character="resources/characters/rabbit.lua"}
 
-function brain.newInstance()
-    return {}
+function brain.newInstance(origin)
+
+    local rabbit = {};
+
+    rabbit.state = "idle"
+
+    rabbit.x = origin.x
+    rabbit.y = origin.y
+    rabbit.dx = 25 rabbit.dy = 52
+
+    return rabbit
 end
 
-function brain.controller(rabbit, player, map)
+function brain.controller(rabbit, player, map, screen)
 
     local controller = {}
 
@@ -14,12 +23,6 @@ function brain.controller(rabbit, player, map)
     local jump_impulsion = 200
 
     local y_velocity = 0
-
-    rabbit.state = "idle"
-
-    rabbit.x = player.x + 100
-    rabbit.y = player.y
-    rabbit.dx = 25 rabbit.dy = 52
 
     local airborne = false
     local jump_orientation = 1

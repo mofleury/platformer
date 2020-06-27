@@ -3,23 +3,27 @@ local control = require("control")
 
 local brain = {character="resources/characters/walker.lua"}
 
-function brain.newInstance()
-    return {}
+function brain.newInstance(origin)
+
+    local walker = {}
+
+    walker.state = "walking"
+
+    walker.x = origin.x + 100
+    walker.y = origin.y
+
+    walker.dx = 25 walker.dy = 52
+
+    return walker
 end
 
-function brain.controller(walker, player, map)
+function brain.controller(walker, player, map, screen)
 
     local controller = {}
 
     local speed = 1
 
     local y_velocity = 0
-
-    walker.state = "walking"
-
-    walker.x = player.x + 100
-    walker.y = player.y
-    walker.dx = 25 walker.dy = 52
 
     function controller.update(dt)
 

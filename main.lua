@@ -69,20 +69,20 @@ local function sleepIfPossible(dt)
     lastframe = love.timer.getTime()
 end
 
-local function createMob()
+local function createEntity(origin, brain)
 
-    local brain = require("controllers/rabbit")
+    local mob = brain.newInstance(origin)
 
-    local mob = brain.newInstance()
+    local character= brain.character
+    if (character ~= nil ) then
+        local mobAnimator = animation.animator(dofile(character), mob, screen)
+        animators[mob] = mobAnimator
+    end
 
-    mobs[mob] = true
-
-    local mobAnimator = animation.animator(dofile(brain.character), mob, screen)
-    animators[mob] = mobAnimator
-
-    local mobController = brain.controller(mob, players[1], map)
+    local mobController = brain.controller(mob, players[1], map, screen)
     controllers[mob] = mobController
 
+    return mob
 end
 
 
@@ -117,8 +117,6 @@ function love.load()
 
     mini = minimap.minimap(screen, map, players, minimap_location, 20, 40)
 
-    bulletSpriteSheet = dofile("resources/characters/bullet.lua")
-
     --    table.insert(players, create_player(map, screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
 end
 
@@ -126,15 +124,14 @@ end
 
 local function newBullet(playerShotEvent)
 
-    local bullet = {}
+    local player = playerShotEvent.from
 
-    local c = control.bullet(bullet, playerShotEvent, map, screen)
+    local ox, oy = control.actionOrigin(player)
 
-    controllers[bullet] = c
+    local origin = { x = ox - 2, y = oy, orientation = playerShotEvent.orientation }
 
-    local a = animation.animator(bulletSpriteSheet, bullet, screen)
+    local bullet = createEntity(origin, require("controllers/bullet"))
 
-    animators[bullet] = a
 
     bullets[bullet] = true
 end
@@ -142,11 +139,9 @@ end
 local function newSlash(playerSlashEvent)
     local source = playerSlashEvent.from
 
-    local slash = { x = source.x, y = source.y, dx = 0, dy = 0 }
+    local origin = { x = source.x, y = source.y, dx = 0, dy = 0 }
 
-    local c = control.slash(slash, source)
-
-    controllers[slash] = c
+    local slash = createEntity(origin, require("controllers/slash"))
 
     slashes[slash] = true
 end
@@ -184,7 +179,10 @@ function love.update(dt)
     --    debug_data.animators = animators
 
     if (love.keyboard.isDown('f')) then
-        createMob()
+        local player = players[1]
+        local mob = createEntity({ x = player.x + 100, y = player.y, orientation = player.orientation }, require("controllers/rabbit"))
+
+        mobs[mob] = true
     end
 
 

@@ -576,7 +576,7 @@ function control.player(player, map, keys)
     return controller
 end
 
-local function actionOrigin(object)
+function control.actionOrigin(object)
     local attackbox = object.frame.attackbox
 
     local x, y = object.x, object.y + object.dy / 2
@@ -593,75 +593,6 @@ local function actionOrigin(object)
     return x, y
 end
 
-function control.bullet(bullet, playerShotEvent, map, screen)
-
-    local player = playerShotEvent.from
-    local controller = {}
-
-    local speed = 10
-    local margin = 100
-
-    local frame = player.frame
-
-    local ox, oy = actionOrigin(player)
-    bullet.x = ox - 2
-    bullet.y = oy
-    bullet.dx = 8
-    bullet.dy = 8
-    bullet.orientation = playerShotEvent.orientation
-    bullet.state = "idle"
-
-
-    function controller.update(dt)
-
-        local events = {}
-
-        bullet.x = bullet.x + speed * bullet.orientation
-
-        local obstacles = map.obstaclesAround(bullet, 3)
-
-        -- bullets should not go through walls
-        local colliding, details = control.mapContacts(map, bullet)
-
-        if colliding or (bullet.x < screen.x - margin) or (bullet.x > screen.x + screen.dx + margin) then
-            events.bulletLost = { from = bullet }
-        end
-
-        return events
-    end
-
-    return controller
-end
-
-function control.slash(slash, player)
-
-    local controller = {}
-
-    local started = false
-
-    function controller.update(dt)
-
-        local events = {}
-
-        local slashBox = player.frame.attackbox
-
-        if slashBox ~= nil then
-            started = true
-
-            slash.x, slash.y = actionOrigin(player)
-
-            slash.dx = slashBox.w
-            slash.dy = slashBox.h
-
-        elseif started == true then
-            events.slashComplete = { from = slash }
-        end
-
-        return events
-    end
-
-    return controller
-end
 
 return control
 
