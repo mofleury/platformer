@@ -26,6 +26,8 @@ local drawSlashes = false
 
 debug_data = {}
 
+
+
 local function create_player(map, x, y, keys)
     local player = {}
 
@@ -86,7 +88,7 @@ function love.load()
     if arg[#arg] == "-debug" then require("mobdebug").start()
     end
     if arg[#arg] == "-ideadebug" then
-        package.path = [[/home/mofleury/.IdeaIC2016.3/config/plugins/Lua/mobdebug/?.lua;]] .. package.path
+        package.path = [[/home/mofleury/.IdeaIC2017.2/config/plugins/Lua/mobdebug/?.lua;]] .. package.path
         require("mobdebug").start()
     end
 
@@ -103,7 +105,7 @@ function love.load()
     local camera_window_width = 100
     local camera_window = { x = screen.dx / 2 - camera_window_width / 2, y = screen.dy / 2 - 100, dx = camera_window_width, dy = 200 }
 
-    map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)
+    map = tiles.tilemap("resources/levels/arena", "resources/levels", screen)
 
     table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's', shoot = 'd', slash = 'c' }))
 

@@ -1,4 +1,16 @@
+local JSON = require "JSON"
+
+
 local tiles = {}
+
+
+local function loadJsonFile(jsonFile)
+    local handle = io.open("./" .. jsonFile .. ".json")
+    local contents = handle:read("*a")
+    handle:close()
+    return JSON:decode(contents)
+end
+
 
 
 local function loadTileSet(rawTilesets, root, mapWidth, mapHeight)
@@ -63,7 +75,7 @@ function tiles.tilemap(tilemap, root, screen)
 
     local map = {}
 
-    local raw = require(tilemap)
+    local raw = loadJsonFile(tilemap)
 
     local tilewidth = raw.tilewidth
     local tileheight = raw.tileheight
