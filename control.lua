@@ -7,9 +7,9 @@ local buttons_actionable = {}
 
 local action_buttons = {}
 
-local gravity = -800
+control.gravity = -800
 
-local function sign(x)
+function control.sign(x)
     if x < 0 then
         return -1
     elseif x > 0 then
@@ -18,7 +18,6 @@ local function sign(x)
         return 0
     end
 end
-
 
 
 local function alignedVertically(details)
@@ -53,7 +52,7 @@ local function was_pressed(button)
     return false
 end
 
-local function mapContacts(map, object)
+function control.mapContacts(map, object)
 
     local obstacles = map.obstaclesAround(object, 3)
 
@@ -489,13 +488,13 @@ function control.player(player, map, keys)
         player.y = (player.y + y_velocity * dt)
 
         if airborne then
-            y_velocity = y_velocity + gravity * dt
+            y_velocity = y_velocity + control.gravity * dt
         end
         y_velocity = state.y_velocity_cap()
 
         local obstacles = map.obstaclesAround(player, 3)
 
-        local colliding, details = mapContacts(map, player)
+        local colliding, details = control.mapContacts(map, player)
 
         --        debug_data[player] = { colliding = colliding, details = details }
 
@@ -577,142 +576,6 @@ function control.player(player, map, keys)
     return controller
 end
 
-function control.walker(walker, player, map)
-
-    local controller = {}
-
-    local speed = 1
-
-    local y_velocity = 0
-
-    walker.state = "walking"
-
-    walker.x = player.x + 100
-    walker.y = player.y
-    walker.dx = 25 walker.dy = 52
-
-    function controller.update(dt)
-
-        local orientation = sign(player.x - walker.x)
-
-        local distance = math.abs(player.x - walker.x)
-
-        walker.orientation = orientation
-
-        local moving = false
-
-        if (distance > 10) then
-            moving = true
-
-            walker.x = walker.x + speed * orientation
-        end
-
-        walker.y = (walker.y + y_velocity * dt)
-
-        local colliding, details = mapContacts(map, walker)
-
-
-        if (not colliding or details.bottom == nil) then
-            y_velocity = y_velocity + gravity * dt
-        else
-            y_velocity = 0
-            walker.y = (details.bottom.y + details.bottom.dy)
-        end
-
-        if colliding then
-            if details.left and orientation == -1 and details.left.y >= walker.y then
-                moving = false
-                walker.x = (details.left.x + details.left.dx + 1)
-            end
-            if details.right and orientation == 1 and details.right.y >= walker.y then
-                moving = false
-                walker.x = (details.right.x - walker.dx - 1)
-            end
-        end
-
-        if moving then
-            walker.state = "walking"
-        else
-            walker.state = "idle"
-        end
-    end
-
-    return controller
-end
-
-function control.rabbit(rabbit, player, map)
-
-    local controller = {}
-
-    local speed = 1
-    local jump_impulsion = 200
-
-    local y_velocity = 0
-
-    rabbit.state = "idle"
-
-    rabbit.x = player.x + 100
-    rabbit.y = player.y
-    rabbit.dx = 25 rabbit.dy = 52
-
-    local airborne = false
-    local jump_orientation = 1
-
-    function controller.update(dt)
-
-
-        rabbit.orientation = jump_orientation
-
-
-        if (airborne) then
-            rabbit.x = rabbit.x + speed * jump_orientation
-            y_velocity = y_velocity + gravity * dt
-        else
-            y_velocity = jump_impulsion
-            jump_orientation = sign(player.x - rabbit.x)
-        end
-
-
-        rabbit.y = (rabbit.y + y_velocity * dt)
-
-        local colliding, details = mapContacts(map, rabbit)
-
-
-        if (not colliding or details.bottom == nil) then
-            airborne = true
-        else
-            if airborne then
-                rabbit.state = "landing"
-            end
-
-            airborne = false
-            y_velocity = 0
-            rabbit.y = (details.bottom.y + details.bottom.dy)
-        end
-
-        if colliding then
-            if details.left and jump_orientation == -1 and details.left.y >= rabbit.y then
-                rabbit.x = (details.left.x + details.left.dx + 1)
-            end
-            if details.right and jump_orientation == 1 and details.right.y >= rabbit.y then
-                rabbit.x = (details.right.x - rabbit.dx - 1)
-            end
-        end
-
-        if airborne then
-            if y_velocity > 0 then
-                rabbit.state = "jumping"
-            else
-                rabbit.state = "falling"
-            end
-        else
-            rabbit.state = "idle"
-        end
-    end
-
-    return controller
-end
-
 local function actionOrigin(object)
     local attackbox = object.frame.attackbox
 
@@ -758,7 +621,7 @@ function control.bullet(bullet, playerShotEvent, map, screen)
         local obstacles = map.obstaclesAround(bullet, 3)
 
         -- bullets should not go through walls
-        local colliding, details = mapContacts(map, bullet)
+        local colliding, details = control.mapContacts(map, bullet)
 
         if colliding or (bullet.x < screen.x - margin) or (bullet.x > screen.x + screen.dx + margin) then
             events.bulletLost = { from = bullet }

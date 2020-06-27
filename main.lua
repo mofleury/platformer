@@ -70,13 +70,17 @@ local function sleepIfPossible(dt)
 end
 
 local function createMob()
-    local mob = {}
+
+    local brain = require("controllers/rabbit")
+
+    local mob = brain.newInstance()
+
     mobs[mob] = true
 
-    local mobAnimator = animation.animator(dofile("resources/characters/rabbit.lua"), mob, screen)
+    local mobAnimator = animation.animator(dofile(brain.character), mob, screen)
     animators[mob] = mobAnimator
 
-    local mobController = control.rabbit(mob, players[1], map)
+    local mobController = brain.controller(mob, players[1], map)
     controllers[mob] = mobController
 
 end
