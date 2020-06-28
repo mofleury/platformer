@@ -19,6 +19,49 @@ function control.sign(x)
     end
 end
 
+function control.has_footing(walker, new_x, map)
+    local around = {}
+
+    local footing = false
+
+    for i, o in ipairs(map.obstaclesAround(walker, 0)) do
+        if (o.y < walker.y) then
+            around[i] = o
+            if ((walker.orientation == -1 and o.x <= new_x) or (walker.orientation == 1 and  o.x + o.dx > new_x + walker.dx )) then
+                footing = true
+            end
+        end
+    end
+
+    return footing
+end
+
+function control.constrain_walker_update(walker, map, dt)
+
+    walker.y = (walker.y + walker.y_velocity * dt)
+
+    local colliding, details = control.mapContacts(map, walker)
+
+
+    if (not colliding or details.bottom == nil) then
+        walker.y_velocity = walker.y_velocity + control.gravity * dt
+    else
+        walker.y_velocity = 0
+        walker.y = (details.bottom.y + details.bottom.dy)
+    end
+
+    if colliding then
+
+        if walker.orientation == -1 and (details.left and details.left.y >= walker.y) then
+           walker.x = (details.left.x + details.left.dx + 1)
+        end
+        if walker.orientation == 1 and  (details.right and details.right.y >= walker.y) then
+           walker.x = (details.right.x - walker.dx - 1)
+        end
+
+    end
+end
+
 
 local function alignedVertically(details)
     if (details.bottom ~= nil) then
@@ -81,7 +124,6 @@ function control.player(player, map, keys)
     table.insert(action_buttons, keys.slash)
 
     local controller = {}
-    controller.debug_data = {}
 
     local jump_height = 300
 

@@ -1,7 +1,13 @@
 local control = require("control")
 
 
-local brain = {character="resources/characters/walker.lua"}
+local brain = { character = "resources/characters/walker.lua" }
+
+local speed = 1
+
+local approach_distance = 100
+
+local behaviors = {}
 
 function brain.newInstance(origin)
 
@@ -14,57 +20,44 @@ function brain.newInstance(origin)
 
     walker.dx = 25 walker.dy = 52
 
+    walker.y_velocity = 0
+
+    walker.orientation = 1
+
+    walker.behavior = behaviors.approach
+
     return walker
 end
+
+
+function behaviors.approach(walker, player, map)
+    walker.orientation = control.sign(player.x - walker.x)
+
+    local distance = math.abs(player.x - walker.x)
+
+    local new_x = walker.x + speed * walker.orientation
+
+local has_footing = control.has_footing(walker, new_x, map)
+
+    if (distance > approach_distance and has_footing) then
+        walker.x = new_x
+    end
+end
+
 
 function brain.controller(walker, player, map, screen)
 
     local controller = {}
 
-    local speed = 1
-
-    local y_velocity = 0
-
     function controller.update(dt)
 
-        local orientation = control.sign(player.x - walker.x)
+       local old_x = walker.x
 
-        local distance = math.abs(player.x - walker.x)
+        walker.behavior(walker, player, map)
 
-        walker.orientation = orientation
+       control.constrain_walker_update(walker, map, dt)
 
-        local moving = false
-
-        if (distance > 10) then
-            moving = true
-
-            walker.x = walker.x + speed * orientation
-        end
-
-        walker.y = (walker.y + y_velocity * dt)
-
-        local colliding, details = control.mapContacts(map, walker)
-
-
-        if (not colliding or details.bottom == nil) then
-            y_velocity = y_velocity + control.gravity * dt
-        else
-            y_velocity = 0
-            walker.y = (details.bottom.y + details.bottom.dy)
-        end
-
-        if colliding then
-            if details.left and orientation == -1 and details.left.y >= walker.y then
-                moving = false
-                walker.x = (details.left.x + details.left.dx + 1)
-            end
-            if details.right and orientation == 1 and details.right.y >= walker.y then
-                moving = false
-                walker.x = (details.right.x - walker.dx - 1)
-            end
-        end
-
-        if moving then
+        if old_x ~= walker.x then
             walker.state = "walking"
         else
             walker.state = "idle"

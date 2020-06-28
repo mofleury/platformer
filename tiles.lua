@@ -99,7 +99,7 @@ function tiles.tilemap(tilemap, root, screen)
     function map.obstaclesAround(o, nbTilesAway)
         local xOrigin = math.floor(o.x / tilewidth - nbTilesAway / 2)
         local yOrigin = 1 + math.floor(o.y / tileheight - nbTilesAway / 2)
-        local xEnd = math.ceil((o.x + o.dx) / tilewidth + nbTilesAway / 2)
+        local xEnd = 1+ math.ceil((o.x + o.dx) / tilewidth + nbTilesAway / 2)
         local yEnd = 1 + math.ceil((o.y + o.dy) / tileheight + nbTilesAway / 2)
 
         local obstacles = {}

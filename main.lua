@@ -9,6 +9,7 @@ local animators = {}
 local controllers = {}
 local players = {}
 local mobs = {}
+local mobCount = 0
 local bullets = {}
 local slashes = {}
 
@@ -109,7 +110,7 @@ function love.load()
     local camera_window_width = 100
     local camera_window = { x = screen.dx / 2 - camera_window_width / 2, y = screen.dy / 2 - 100, dx = camera_window_width, dy = 200 }
 
-    map = tiles.tilemap("resources/levels/arena", "resources/levels", screen)
+    map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)
 
     table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's', shoot = 'd', slash = 'c' }))
 
@@ -169,6 +170,7 @@ local function destroyMob(mob)
     controllers[mob] = nil
     animators[mob] = nil
     mobs[mob] = nil
+    mobCount = mobCount - 1
 end
 
 function love.update(dt)
@@ -178,11 +180,22 @@ function love.update(dt)
     --    debug_data.controllers = controllers
     --    debug_data.animators = animators
 
-    if (love.keyboard.isDown('f')) then
-        local player = players[1]
-        local mob = createEntity({ x = player.x + 100, y = player.y, orientation = player.orientation }, require("controllers/rabbit"))
 
-        mobs[mob] = true
+    if (mobCount < 2 and love.keyboard.isDown('f')) then
+        local player = players[1]
+
+        if(mobCount == 0) then
+            local mob = createEntity({ x = player.x + 100, y = player.y, orientation = player.orientation }, require("controllers/walker"))
+
+            mobs[mob] = true
+            mobCount = mobCount + 1
+        else
+
+            local mob = createEntity({ x = player.x + 100, y = player.y, orientation = player.orientation }, require("controllers/rabbit"))
+
+            mobs[mob] = true
+            mobCount = mobCount+1
+        end
     end
 
 
@@ -283,6 +296,12 @@ function love.draw()
 
     for i, a in pairs(debug_data.colliding) do
         drawBox(a)
+    end
+
+    if (debug_data.around ~= nil) then
+    for i, a in pairs(debug_data.around) do
+        drawBox(a)
+    end
     end
 
     if drawSlashes then
