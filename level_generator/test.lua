@@ -4,6 +4,12 @@
 
 local levels = require "levels"
 
-local skeleton = levels.generate_skeleton(200, 10)
+levels.debug = false
 
-levels.print_skeleton(skeleton)
+for seed = 1, 10, 1 do
+    local skeleton = levels.generate_skeleton(seed, 10)
+
+    levels.print_skeleton(skeleton)
+
+    print "-------------"
+end
