@@ -82,7 +82,7 @@ local function get_or_create_next_cell(skeleton, newX, newY)
 end
 
 local function add_cell(skeleton, remaining, curX, curY, curCell)
-    local throw = math.random(4);
+    local throw = math.random(5);
     local newX = curX
     local newY = curY
     local nextCell = {}
@@ -104,12 +104,25 @@ local function add_cell(skeleton, remaining, curX, curY, curCell)
         newX = newX - 1
         nextCell = get_or_create_next_cell(skeleton, newX, newY)
         nextCell.right = true
-    else
+    elseif (throw <= 4) then
         curCell.right = true
         newX = newX + 1
         ensure_width(skeleton, newX)
         nextCell = get_or_create_next_cell(skeleton, newX, newY)
         nextCell.left = true
+    else
+        -- backtrack
+        nextCell = nil
+        while nextCell == nil do
+            newX = math.random(1, skeleton.width)
+            newY = math.random(skeleton.y_origin, skeleton.y_origin + skeleton.height - 1)
+            local slice = skeleton[newY]
+            if slice ~= nil then
+                nextCell = slice[newX]
+            end
+        end
+        remaining = remaining + 1 -- backtrack does not create a cell
+        if debug then print("backtrack") end
     end
 
     if debug then

@@ -4,6 +4,6 @@
 
 local levels = require "levels"
 
-local skeleton = levels.generate_skeleton(250, 10)
+local skeleton = levels.generate_skeleton(200, 10)
 
 levels.print_skeleton(skeleton)
