@@ -28,11 +28,13 @@ local function print_node(node, lines, row)
             content = "b"
         elseif (node.type == "end") then
             content = "e"
+        elseif (node.type == "leaf") then
+            content = "l"
         end
 
-        lines[row * 3] = lines[row * 3] .. "." .. (node.top and "| |" or "---") .. ".";
+        lines[row * 3] = lines[row * 3] .. "┌" .. (node.top and "| |" or "---") .. "┐";
         lines[row * 3 + 1] = lines[row * 3 + 1] .. (node.left and "=" or "|") .. " " .. content .. " " .. (node.right and "=" or "|");
-        lines[row * 3 + 2] = lines[row * 3 + 2] .. "." .. (node.bottom and "| |" or "---") .. ".";
+        lines[row * 3 + 2] = lines[row * 3 + 2] .. "└" .. (node.bottom and "| |" or "---") .. "┘";
     end
 end
 
@@ -144,6 +146,8 @@ local function add_cell(skeleton, remaining, curX, curY, curCell, main)
     if (remaining == 1) then
         if main then
             nextCell.type = "end"
+        else
+            nextCell.type = "leaf"
         end
         return skeleton
     end
@@ -168,7 +172,7 @@ local function add_branch(skeleton, size)
     add_cell(skeleton, size, newX, newY, nextCell, false)
 end
 
-function levels.generate_skeleton(seed, path_length)
+function levels.generate_skeleton(seed, path_length, branches, branches_length)
 
     math.randomseed(seed)
 
@@ -180,7 +184,9 @@ function levels.generate_skeleton(seed, path_length)
 
     add_cell(skeleton, path_length, 1, 1, curCell, true)
 
-    add_branch(skeleton, 5)
+    for i = 1, branches, 1 do
+        add_branch(skeleton, branches_length)
+    end
 
     return skeleton
 end

@@ -7,7 +7,7 @@ local levels = require "levels"
 levels.debug = false
 
 for seed = 1, 10, 1 do
-    local skeleton = levels.generate_skeleton(seed, 10)
+    local skeleton = levels.generate_skeleton(seed, 10, 5,5)
 
     levels.print_skeleton(skeleton)
 
