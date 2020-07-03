@@ -100,43 +100,71 @@ local function get_or_create_next_cell(skeleton, newX, newY)
     return nextCell
 end
 
-local function add_cell(skeleton, remaining, curX, curY, curCell, main)
+local function isCloserToStart(curX, curY, newX, newY)
+    local curDistanceToStart = math.abs(curX) + math.abs(curY)
+    local newDistanceToStart = math.abs(newX) + math.abs(newY)
+    return newDistanceToStart < curDistanceToStart
+end
+
+local extenders = {
+    top = function(curCell, nextCell)
+        curCell.top = true
+        nextCell.bottom = true
+    end,
+    bottom = function(curCell, nextCell)
+        curCell.bottom = true
+        nextCell.top = true
+    end,
+    left = function(curCell, nextCell)
+        curCell.left = true
+        nextCell.right = true
+    end,
+    right = function(curCell, nextCell)
+        curCell.rght = true
+        nextCell.left = true
+    end,
+}
+
+local function add_cell(skeleton, min_path, remaining, curX, curY, curCell, main)
 
 
     local throw = math.random(probabilities.total);
     local newX = curX
     local newY = curY
     local nextCell = {}
+    local extender = nil
     if levels.debug then
         print("-----" .. throw .. " " .. curX .. "-" .. curY .. "-------")
     end
     if levels.debug then print(throw) end
     if (throw <= probabilities.top and curCell.top == nil) then
-        curCell.top = true
+        extender = extenders.top
         newY = newY + 1
-        ensure_y(skeleton, newY)
-        nextCell = get_or_create_next_cell(skeleton, newX, newY)
-        nextCell.bottom = true
     elseif (throw <= probabilities.bottom and curCell.bottom == nil) then
-        curCell.bottom = true
+        extender = extenders.bottom
         newY = newY - 1
-        ensure_y(skeleton, newY)
-        nextCell = get_or_create_next_cell(skeleton, newX, newY)
-        nextCell.top = true
     elseif (throw <= probabilities.left and curX > 1 and curCell.left == nil) then
-        curCell.left = true
         newX = newX - 1
-        nextCell = get_or_create_next_cell(skeleton, newX, newY)
-        nextCell.right = true
+        extender = extenders.left
     elseif (throw <= probabilities.right) then
-        curCell.right = true
         newX = newX + 1
-        ensure_width(skeleton, newX)
-        nextCell = get_or_create_next_cell(skeleton, newX, newY)
-        nextCell.left = true
+        extender = extenders.right
     else
         print("oops" .. throw)
     end
+
+
+    if (remaining <= min_path) and isCloserToStart(curX, curY, newX, newY) then
+        -- bad throw, we are getting too close from start
+        add_cell(skeleton, min_path, remaining, curX, curY, curCell, main)
+        return
+    end
+
+    ensure_y(skeleton, newY)
+    ensure_width(skeleton, newX)
+    nextCell = get_or_create_next_cell(skeleton, newX, newY)
+    extender(curCell, nextCell)
+
 
     if levels.debug then
         print("-----" .. newX .. "-" .. newY .. "-------")
@@ -146,12 +174,13 @@ local function add_cell(skeleton, remaining, curX, curY, curCell, main)
     if (remaining == 1) then
         if main then
             nextCell.type = "end"
-        else
+            skeleton.endCell = nextCell
+        elseif nextCell.type == nil then
             nextCell.type = "leaf"
         end
         return skeleton
     end
-    add_cell(skeleton, remaining - 1, newX, newY, nextCell, main)
+    add_cell(skeleton, min_path, remaining - 1, newX, newY, nextCell, main)
 end
 
 local function add_branch(skeleton, size)
@@ -169,10 +198,10 @@ local function add_branch(skeleton, size)
         end
     end
 
-    add_cell(skeleton, size, newX, newY, nextCell, false)
+    add_cell(skeleton, 1, size, newX, newY, nextCell, false)
 end
 
-function levels.generate_skeleton(seed, path_length, branches, branches_length)
+function levels.generate_skeleton(seed, min_path_length, max_path_length, branches, branches_length)
 
     math.randomseed(seed)
 
@@ -181,8 +210,9 @@ function levels.generate_skeleton(seed, path_length, branches, branches_length)
     local curCell = {}
     skeleton[1][1] = curCell
     curCell.type = "begin"
+    skeleton.beginCell = curCell
 
-    add_cell(skeleton, path_length, 1, 1, curCell, true)
+    add_cell(skeleton, min_path_length, max_path_length, 1, 1, curCell, true)
 
     for i = 1, branches, 1 do
         add_branch(skeleton, branches_length)
