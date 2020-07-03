@@ -120,7 +120,7 @@ local extenders = {
         nextCell.right = true
     end,
     right = function(curCell, nextCell)
-        curCell.rght = true
+        curCell.right = true
         nextCell.left = true
     end,
 }
