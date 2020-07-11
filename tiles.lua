@@ -70,13 +70,14 @@ local function loadLayer(rawLayer)
     return layer
 end
 
-
 function tiles.tilemap(tilemap, root, screen)
+    local raw = loadJsonFile(tilemap)
+    return tiles.tilemapDirect(raw, root, screen)
+end
+
+function tiles.tilemapDirect(raw, root, screen)
 
     local map = {}
-
-    local raw = loadJsonFile(tilemap)
-
     local tilewidth = raw.tilewidth
     local tileheight = raw.tileheight
     local spriteBatches = {}
@@ -99,7 +100,7 @@ function tiles.tilemap(tilemap, root, screen)
     function map.obstaclesAround(o, nbTilesAway)
         local xOrigin = math.floor(o.x / tilewidth - nbTilesAway / 2)
         local yOrigin = 1 + math.floor(o.y / tileheight - nbTilesAway / 2)
-        local xEnd = 1+ math.ceil((o.x + o.dx) / tilewidth + nbTilesAway / 2)
+        local xEnd = 1 + math.ceil((o.x + o.dx) / tilewidth + nbTilesAway / 2)
         local yEnd = 1 + math.ceil((o.y + o.dy) / tileheight + nbTilesAway / 2)
 
         local obstacles = {}
@@ -141,7 +142,7 @@ function tiles.tilemap(tilemap, root, screen)
 
     function map.draw()
         for sb, u in pairs(spriteBatches) do
-            love.graphics.draw(sb, - screen.x, screen.y)
+            love.graphics.draw(sb, -screen.x, screen.y)
         end
     end
 

@@ -4,6 +4,7 @@ local tiles = require "tiles"
 local cameras = require "cameras"
 local collision = require "collision"
 local minimap = require "minimap"
+local levels = require "level_generator/levels"
 
 local animators = {}
 local controllers = {}
@@ -74,8 +75,8 @@ local function createEntity(origin, brain)
 
     local mob = brain.newInstance(origin)
 
-    local character= brain.character
-    if (character ~= nil ) then
+    local character = brain.character
+    if (character ~= nil) then
         local mobAnimator = animation.animator(dofile(character), mob, screen)
         animators[mob] = mobAnimator
     end
@@ -110,13 +111,39 @@ function love.load()
     local camera_window_width = 100
     local camera_window = { x = screen.dx / 2 - camera_window_width / 2, y = screen.dy / 2 - 100, dx = camera_window_width, dy = 200 }
 
-    map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)
+    local skeleton = levels.generate_skeleton(1, 4, 10, 5, 5)
 
-    table.insert(players, create_player(map, screen.dx / 2, 400, { left = 'left', right = 'right', jump = 'a', dash = 's', shoot = 'd', slash = 'c' }))
+    local cellBank = {}
+    cellBank["0000"] = "resources/levels/cell"
+    cellBank["0001"] = "resources/levels/cell"
+    cellBank["0010"] = "resources/levels/cell"
+    cellBank["0011"] = "resources/levels/cell"
+    cellBank["0100"] = "resources/levels/cell"
+    cellBank["0101"] = "resources/levels/cell"
+    cellBank["0110"] = "resources/levels/cell"
+    cellBank["0111"] = "resources/levels/cell"
+    cellBank["1000"] = "resources/levels/cell"
+    cellBank["1001"] = "resources/levels/cell"
+    cellBank["1010"] = "resources/levels/cell"
+    cellBank["1011"] = "resources/levels/cell"
+    cellBank["1100"] = "resources/levels/cell"
+    cellBank["1101"] = "resources/levels/cell"
+    cellBank["1110"] = "resources/levels/cell"
+    cellBank["1111"] = "resources/levels/cell"
+
+    local tileMap = levels.buildTileMap(skeleton, "resources/levels/cell", cellBank)
+
+    levels.print_skeleton(skeleton)
+    -- levels.print_tilemap(tileMap)
+
+    map = tiles.tilemapDirect(tileMap, "resources/levels", screen)
+    --map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)
+
+    table.insert(players, create_player(map, screen.dx / 4, 100, { left = 'left', right = 'right', jump = 'a', dash = 's', shoot = 'd', slash = 'c' }))
 
     camera = cameras.windowCamera(camera_window, screen, players[1])
 
-    mini = minimap.minimap(screen, map, players, minimap_location, 20, 40)
+    mini = minimap.minimap(screen, map, players, minimap_location, 20, 140)
 
     --    table.insert(players, create_player(map, screen.dx / 2 + 50, 400, { left = 'k', right = 'l', jump = 'q', dash = 'w' }))
 end
@@ -184,7 +211,7 @@ function love.update(dt)
     if (mobCount < 2 and love.keyboard.isDown('f')) then
         local player = players[1]
 
-        if(mobCount == 0) then
+        if (mobCount == 0) then
             local mob = createEntity({ x = player.x + 100, y = player.y, orientation = player.orientation }, require("controllers/walker"))
 
             mobs[mob] = true
@@ -194,7 +221,7 @@ function love.update(dt)
             local mob = createEntity({ x = player.x + 100, y = player.y, orientation = player.orientation }, require("controllers/rabbit"))
 
             mobs[mob] = true
-            mobCount = mobCount+1
+            mobCount = mobCount + 1
         end
     end
 
@@ -299,9 +326,9 @@ function love.draw()
     end
 
     if (debug_data.around ~= nil) then
-    for i, a in pairs(debug_data.around) do
-        drawBox(a)
-    end
+        for i, a in pairs(debug_data.around) do
+            drawBox(a)
+        end
     end
 
     if drawSlashes then

@@ -1,3 +1,5 @@
+local JSON = require "JSON"
+
 local levels = {}
 
 levels.debug = false
@@ -221,7 +223,141 @@ function levels.generate_skeleton(seed, min_path_length, max_path_length, branch
     return skeleton
 end
 
+local function loadJsonFile(jsonFile)
+    local handle = io.open("./" .. jsonFile .. ".json")
+    local contents = handle:read("*a")
+    handle:close()
+    return JSON:decode(contents)
+end
 
+local function setTileContent(layer, x, y, content)
+    local index = (layer.height - y) * layer.width + x
+    layer.data[index] = content
+end
+
+local function getTileContent(layer, x, y)
+    local index = (layer.height - y) * layer.width + x
+    return layer.data[index]
+end
+
+local function chooseCellMap(node, cellBank)
+    local doors = ""
+    if node.left then doors = doors .. "1" else doors = doors .. "0" end
+    if node.top then doors = doors .. "1" else doors = doors .. "0" end
+    if node.right then doors = doors .. "1" else doors = doors .. "0" end
+    if node.bottom then doors = doors .. "1" else doors = doors .. "0" end
+
+    local cellFile = cellBank[doors]
+
+    return loadJsonFile(cellFile)
+end
+
+local function findLayer(tileMap, layerName)
+    for i, layer in ipairs(tileMap.layers) do
+        if layer.name == layerName then
+            return layer
+        end
+    end
+    print("oops no layer with name " .. layerName)
+    return nil
+end
+
+function levels.buildTileMap(skeleton, cellTilemapFile, cellBank)
+
+    local cellMap = loadJsonFile(cellTilemapFile)
+
+    local full = {}
+
+    full.tilewidth = cellMap.tilewidth
+    full.tileheight = cellMap.tileheight
+    full.tilesets = cellMap.tilesets
+
+    full.width = skeleton.width * cellMap.width
+    full.height = skeleton.height * cellMap.height
+
+
+    full.layers = {}
+    for i, originalLayer in ipairs(cellMap.layers) do
+        local layer = {}
+        full.layers[i] = layer
+        layer.name = originalLayer.name
+
+        layer.width = full.width
+        layer.height = full.height
+        layer.data = {}
+
+        local cellWidth = originalLayer.width
+        local cellHeight = originalLayer.height
+
+        local bottom = skeleton.y_origin
+        local top = skeleton.y_origin + skeleton.height - 1
+
+        for sh = bottom, top, 1 do
+            for sw = 1, skeleton.width, 1 do
+                local slice = skeleton[sh];
+                if slice ~= nil then
+                    local node = slice[sw]
+
+
+                    local cellLayer = nil
+
+                    if (node ~= nil) then
+                        cellMap = chooseCellMap(node, cellBank)
+                        cellLayer = findLayer(cellMap, layer.name)
+                    end
+
+
+                    local nodeX = (sw - 1) * cellWidth
+                    local nodeY = (sh - bottom) * cellHeight
+
+                    for w = 1, cellWidth, 1 do
+                        for ih = 1, cellHeight, 1 do
+
+                            local tileContent = nil
+
+                            if (cellLayer ~= nil) then
+                                tileContent = getTileContent(cellLayer, w, ih)
+                            end
+                            if (tileContent ~= nil) then
+                                setTileContent(layer, nodeX + w, nodeY + ih, tileContent)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return full
+end
+
+function levels.print_tilemap(tilemap)
+    for i, layer in ipairs(tilemap.layers) do
+        if (layer.name == "solid") then
+            for ih = layer.height, 1, -1 do
+
+                local rowContent = ""
+
+                for w = 1, layer.width, 1 do
+
+                    local tileContent = getTileContent(layer, w, ih)
+
+
+                    local dot = " "
+                    if (tileContent == nil) then
+                        dot = "."
+                    elseif tileContent > 0 then
+                        dot = "o"
+                    end
+
+                    rowContent = rowContent .. "" .. dot
+                end
+
+                print(rowContent)
+            end
+        end
+    end
+end
 
 return levels
 
