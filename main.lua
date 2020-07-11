@@ -4,7 +4,7 @@ local tiles = require "tiles"
 local cameras = require "cameras"
 local collision = require "collision"
 local minimap = require "minimap"
-local levels = require "level_generator/levels"
+local levels = require "levels"
 
 local animators = {}
 local controllers = {}
@@ -113,28 +113,12 @@ function love.load()
 
     local skeleton = levels.generate_skeleton(1, 4, 10, 5, 5)
 
-    local cellBank = {}
-    cellBank["0000"] = "resources/levels/cell"
-    cellBank["0001"] = "resources/levels/cell"
-    cellBank["0010"] = "resources/levels/cell"
-    cellBank["0011"] = "resources/levels/cell"
-    cellBank["0100"] = "resources/levels/cell"
-    cellBank["0101"] = "resources/levels/cell"
-    cellBank["0110"] = "resources/levels/cell"
-    cellBank["0111"] = "resources/levels/cell"
-    cellBank["1000"] = "resources/levels/cell"
-    cellBank["1001"] = "resources/levels/cell"
-    cellBank["1010"] = "resources/levels/cell"
-    cellBank["1011"] = "resources/levels/cell"
-    cellBank["1100"] = "resources/levels/cell"
-    cellBank["1101"] = "resources/levels/cell"
-    cellBank["1110"] = "resources/levels/cell"
-    cellBank["1111"] = "resources/levels/cell"
+    local cellBank = levels.resolveCellBank("cells_index")
 
     local tileMap = levels.buildTileMap(skeleton, "resources/levels/cell", cellBank)
 
     levels.print_skeleton(skeleton)
-    -- levels.print_tilemap(tileMap)
+     levels.print_tilemap(tileMap)
 
     map = tiles.tilemapDirect(tileMap, "resources/levels", screen)
     --map = tiles.tilemap("resources/levels/sandbox", "resources/levels", screen)

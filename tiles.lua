@@ -55,7 +55,7 @@ local function loadLayer(rawLayer)
 
     for w = 1, rawLayer.width + 1, 1 do
         layer[w] = {}
-        for ih = 0, rawLayer.height - 1, 1 do
+        for ih = 0, rawLayer.height, 1 do
 
             local h = rawLayer.height - ih
 

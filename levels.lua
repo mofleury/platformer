@@ -230,6 +230,27 @@ local function loadJsonFile(jsonFile)
     return JSON:decode(contents)
 end
 
+function levels.resolveCellBank(jsonIndex)
+
+    local index = loadJsonFile(jsonIndex)
+
+    local bank = {}
+
+    local root = index[1]
+    local rootDirectory = root.name
+    for i, configuration in ipairs(root.contents) do
+        local configurationCells = {}
+        bank[configuration.name] = configurationCells
+        for j, cell in ipairs(configuration.contents) do
+            table.insert(configurationCells, rootDirectory .. "/" .. configuration.name .. "/" .. string.gsub(cell.name, ".json", ""))
+        end
+    end
+
+    return bank
+end
+
+
+
 local function setTileContent(layer, x, y, content)
     local index = (layer.height - y) * layer.width + x
     layer.data[index] = content
@@ -247,7 +268,7 @@ local function chooseCellMap(node, cellBank)
     if node.right then doors = doors .. "1" else doors = doors .. "0" end
     if node.bottom then doors = doors .. "1" else doors = doors .. "0" end
 
-    local cellFile = cellBank[doors]
+    local cellFile = cellBank[doors][1]
 
     return loadJsonFile(cellFile)
 end
